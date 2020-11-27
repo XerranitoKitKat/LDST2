@@ -1,0 +1,105 @@
+html{background-color: #FFC989; margin: auto;}
+
+body{
+  margin: 0;
+  min-height: 100%;
+}
+
+footer{ /*Estilo del footer*/
+  margin-top: 100px;
+  width: 100%;
+  text-align: center;
+  font: 15px Verdana;
+  background-color: #808080;
+}
+#cuerpo{ /*Estilo usado en el div de info.html que contiene el texto*/
+  margin:0px;
+  padding: 0px;
+  display: flex;
+  flex-flow: row;
+}
+:focus{
+  outline: 2px solid black; /*se remarcan objetos al pulsar tab (solo funciona con algunos objetos)*/
+}
+
+.flexInicio{ /*estilo del contenedor flex para la barra de inicio*/
+  display: flex;
+  flex-flow: row;
+
+  margin: 0px;
+  background-color: lightblue;
+  width: 100%;
+  min-height: 50px;
+  font-size: medium;
+  padding-bottom: 2px;
+}
+
+.flexInicio > div#cabecera{ /*estilo div (nombre de pagina) del flex de la barra de inicio*/
+  flex: 2 1 auto;
+  margin: 0;
+
+  text-align: center;
+  font-family: Verdana;
+
+  cursor: pointer; /*aparece mano de selección cuando se pone el raton encima*/
+}
+
+.flexInicio > div#boton1, div#boton2, div#boton3{ /*estilo divs (padres de botones) del flex de la barra de inicio*/
+  flex: 1 1 auto;
+  margin: 2px;
+  background-color: gray;
+  font-size: 30px;
+  font-family: helvetica;
+  border-radius: 6px;
+  border: 2px solid #85929E;
+}
+
+.botoninicio{ /*estilo de los botones de la barra de inicia*/
+  width: 99%; /*Poniendolo al 100% la página se descuadra un poco y aparece un scroll horizontal muy pequeño pero molesto, al 99% funciona bien*/
+  height: 100%;
+  margin: 3px;
+  border-radius: 6px;
+  border-style: hidden;
+  cursor: pointer;
+}
+.botoninicio:hover{
+  color: #008080;
+}
+.parraf{ /*estilo usado en divs de info.html para dividir texto*/
+  background-color: white;
+  width: 100%;
+  text-align: center;
+}
+#cuerpo > flexContenedorPrincipal{ /*estilo del contenedor flex central con texto para info.html*/
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  background-color: white;
+  width: 60%
+  flex: 1 0 60%
+  order: 2;
+}
+#cuerpo > flexIzquierda{ /*estilo del contenedor flex izquierdo con imagen para info.html*/
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  max-height: 200px;
+  width: 20%
+  flex: 1 0 20%
+  order: 1;
+}
+#cuerpo > flexDerecha{ /*estilo del contenedor flex derecho con imagen para info.html*/
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  max-height: 200px;
+  width: 20%
+  flex: 1 0 20%
+  order: 3;
+}

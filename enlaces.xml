@@ -1,0 +1,53 @@
+<enlaces>
+
+<!--
+  En este XML creamos una colección de elementos enlace que contienen pares url y descripcion. De esta forma el contenido mostrado en el grid principal resulta
+  fácil de actualizar sin tener siquiera que meterse en código. Estos datos se muestran en página.html mediante AJAX.
+-->
+
+<enlace>
+  <url>http://tel.uva.es</url>
+  <descripcion>Pagina web principal de Teleco</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/breve-guia-estudiantes.pdf</url>
+  <descripcion>Breve Guia para los estudiantes</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/Medidas-en-los-centros-UVa.pdf</url>
+  <descripcion>Medidas en los centros</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/Documento-PREPARACION-DEL-CURSO-20-20-2021_Acuerdos_CG_24-07-2020.pdf</url>
+  <descripcion>Preparacion del curso 2020-2021 </descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/VentilacionClimatizacionCOVID2020-07-21.pdf</url>
+  <descripcion>Ventilacion y climatización de espacios</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/ActuacionesfrentecasosCOVID2020-07-14.pdf</url>
+  <descripcion>Actuación frente a casos de Covid-19</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/medidas/doc/PLAN-CYL-PREVENCION-Y-CONTROL-FRENTE-COVID-19.pdf</url>
+  <descripcion>Plan de Medidas de Prevencion y Control en Castilla y León</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/es_ES/detalle/El-Rector-de-la-UVa-informa.-Suspension-de-la-actividad-docente-presencial</url>
+  <descripcion>La Universidad de Valladolid en la nueva normalidad</descripcion>
+</enlace>
+
+<enlace>
+  <url>https://comunicacion.uva.es/covid19/index.html</url>
+  <descripcion>Informacion sobre el Covid-19</descripcion>
+</enlace>
+
+</enlaces>
