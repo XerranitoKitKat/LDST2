@@ -108,10 +108,13 @@
       </div>
       <div class="elem" id="contenedor_asig"></div><br>
   </div><br>
-<div>
   <div id="botonpeq" style="float:right;">
     <button type="button" id="prevBtn" onclick="siguienteAnterior(-1)" style="font-family:sans-serif;font-size:14px;">Anterior</button>
     <button type="button" id="nextBtn" onclick="siguienteAnterior(1)" style="font-family:sans-serif;font-size:14px;">Siguiente</button>
   </div>
+</form>
+<?php
+include 'footer.php';
+?>
 </body>
 </html>
