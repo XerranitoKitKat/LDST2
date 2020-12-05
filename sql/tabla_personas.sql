@@ -1,5 +1,5 @@
 create table personas(
-email char(100) not null,
+email char(100) not null primary key,
 nombre char(50) not null,
 apellidos char(100) not null,
 DNI char(10) not null,
