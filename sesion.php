@@ -29,7 +29,7 @@
 
 
 <div class="formulario">
-  <form>
+  <form action="perfil.php" method="post" enctype="multipart/form-data">
   <label for="user">Nombre de usuario:</label><br>
   <input type="text" id="user" name="user"><br>
   <label for="passwd">Contraseña:</label><br>

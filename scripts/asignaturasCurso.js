@@ -55,5 +55,4 @@ function mostrarAsignaturas(curso) {
   }
   document.getElementById("contenedor_asig").innerHTML=txt;
 
-
 }
