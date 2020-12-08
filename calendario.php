@@ -1,12 +1,10 @@
 <?php
-# definimos los valores iniciales para nuestro calendario
+#Obtenemos el dia, el mes y el año
 $month=date("n");
 $year=date("Y");
 $diaActual=date("j");
 
-# Obtenemos el dia de la semana del primer dia
-# Devuelve 0 para domingo, 6 para sabado
-$diaSemana=date("w",mktime(0,0,0,$month,1,$year))+7;
+$diaSemana=date("w",mktime(0,0,0,$month,1,$year));
 # Obtenemos el ultimo dia del mes
 $ultimoDiaMes=date("d",(mktime(0,0,0,$month+1,1,$year)-1));
 
@@ -17,12 +15,9 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 <!DOCTYPE html>
 <html lang="es">
 <head>
-	<!--http://www.lawebdelprogramador.com-->
-	<title>Ejemplo de un simple calendario en PHP</title>
-	<meta charset="utf-8">
 	<style>
 		#calendar {
-			font-family:Arial;
+			font-family:helvetica;
 			font-size:12px;
 		}
 		#calendar caption {
@@ -42,14 +37,19 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 			padding:2px 5px;
 			background-color:silver;
 		}
-		#calendar .hoy {
+		#calendar .primerTest{
+			background-color:yellow;
+		}
+		#calendar .segundoTest{
 			background-color:red;
+		}
+		#calendar .desconfinamiento{
+			background-color:green;
 		}
 	</style>
 </head>
 
 <body>
-<h1>Ejemplo de un simple calendario en PHP</h1>
 <table id="calendar">
 	<caption><?php echo $meses[$month]." ".$year?></caption>
 	<tr>
@@ -58,29 +58,33 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 	</tr>
 	<tr bgcolor="silver">
 		<?php
-		$last_cell=$diaSemana+$ultimoDiaMes;
-		// hacemos un bucle hasta 42, que es el máximo de valores que puede
-		// haber... 6 columnas de 7 dias
-		for($i=1;$i<=42;$i++)
+		$fin=$diaSemana+$ultimoDiaMes;
+		for($i=1;$i<=35;$i++)
 		{
 			if($i==$diaSemana)
 			{
-				// determinamos en que dia empieza
-				$day=1;
+				$day=1; #para que empiece el primer dia del mes
 			}
-			if($i<$diaSemana || $i>=$last_cell)
+			if($i<$diaSemana || $i>=$fin)
 			{
-				// celca vacia
-				echo "<td>&nbsp;</td>";
+				echo "<td>&nbsp;</td>"; # Mostramos celdas vacias en caso de que el mes no acabe en domingo o no empiece en lunes
 			}else{
-				// mostramos el dia
-				if($day==$diaActual)
-					echo "<td class='hoy'>$day</td>";
-				else
+
+				if($day==$diaActual){
+					echo "<td class='primerTest'>$day</td>";
+					}
+				else if($day==($diaActual + 10)){
+					echo "<td class='segundoTest'>$day</td>";
+					}
+				else if($day==($diaActual + 15)){
+					echo "<td class='desconfinamiento'>$day</td>";
+					}
+				else if($day!=$diaActual){
 					echo "<td>$day</td>";
+				}
 				$day++;
 			}
-			// cuando llega al final de la semana, iniciamos una columna nueva
+			# cuando llega al final de la semana, iniciamos una columna nueva
 			if($i%7==0)
 			{
 				echo "</tr><tr>\n";

@@ -37,7 +37,7 @@
     $resultado	=	mysqli_query($bd,	$query);
     for ($i = 0; $i < mysqli_num_rows($resultado);$i++){
       $fila = mysqli_fetch_array($resultado);
-      if ($fila['email'] == $GLOBALS["arrayProyecto(0)"]){ #aqui comprobaremos que se escoge a la persona correcta
+      if ($fila['email'] == $_SESSION['email']){ #aqui comprobaremos que se escoge a la persona correcta
         break;                                #a mostrar
       }
     }
@@ -88,7 +88,7 @@
     $id = 0;
     for($i = 0; $i < mysqli_num_rows($resultado); $i++){
         $fila = mysqli_fetch_array($resultado); #aqui cojo la ultima entrada de la base de datos de una misma persona (por si ha estado mas de una vez confinado)
-        if(($id < $fila['identificador'])&&($fila['email']==$GLOBALS["arrayProyecto(0)"])){
+        if(($id < $fila['identificador'])&&($fila['email']==$_SESSION['email'])){
           $id = $filas['identificador'];
           $fila2 = $fila;
         }
@@ -101,8 +101,8 @@
       <label for "Si"> He dado positivo o estoy confinado. </label></br></br>
       <input type = "submit" value = "Enviar">';
     }
-    if(($fila2 != NULL)&&($fila2['fecha_desconf'] > $fecha_actual)){ #OJO COMPROBAR QUE COJO BIEN LAS FECHAS, O SI LAS COJO!
-      
+    if(($fila2 != NULL)&&($fila2['fecha_desconf'] > $fecha_actual)){ #OJO COMPROBAR QUE COJO BIEN LAS FECHAS, O SI LAS COJO!  ADEMAS DE HACERLAS GLOBALES PARA MOSTRARLAS EN EL CALENDARIO
+      include 'calendario.php';
     }
 
     ?>
