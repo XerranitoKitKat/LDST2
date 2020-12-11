@@ -19,7 +19,7 @@ footer{ /*Estilo del footer*/
   flex-flow: row;
 }
 :focus{
-  outline: 2px solid black; /*se remarcan objetos al pulsar tab (solo funciona con algunos objetos)*/
+  outline: 1px solid grey; /*se remarcan objetos al pulsar tab (solo funciona con algunos objetos)*/
 }
 
 .flexInicio{ /*estilo del contenedor flex para la barra de inicio*/

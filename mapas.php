@@ -41,9 +41,16 @@
     }
 
     .contenedor-Lista{
-      height: 200px;
+      max-height: 200px;
       overflow: auto; /*Similar a scrollbar pero solo muestra las barras necesariias*/
       border: 2px outset black;
+    }
+
+    .contenedor-Buscador{
+      min-height: 50px;
+      margin: auto;
+      font: large Verdana;
+      padding: 0 30% 0 30%;
     }
 
     .lista{
@@ -64,6 +71,12 @@
     #cambiador{
       text-align: center;
       min-height: 30px;
+    }
+
+    #buscador *{
+      margin: auto;
+      width: 100%;
+      height: 100%;
     }
 
     @media all and (max-width:640px){
@@ -106,75 +119,209 @@
     </p>
   </div>
 
-  <div class="contenedor-Texto contenedor-Lista"> <!--Puede que haya una manera de hacer esto con javascript pero como esto no va a cambiar y el tiempo es limitado lo hago a pelo*/-->
-    <div class="lista">
-      <div>PLANO DE PLANTA BAJA</div>
-      <div><a href="./pdfs/telecoinformatica-1.pdf" target="_blanck">PDF</a></div>
+  <div class="contenedor-Texto">
+    <p>A continuacion tienes a tu disposicion un buscador que te permitira encontrar los planos de las aulas correspondientes a tus
+      asignaturas. Introduce su nombre completo. Puedes ver una lista de las asignaturas <a
+      href="https://www.uva.es/export/sites/uva/2.docencia/2.01.grados/2.01.02.ofertaformativagrados/detalle/Grado-en-Ingenieria-de-Tecnologias-de-Telecomunicacion/">aquí</a>.</br>
+      <b>IMPORTANTE:</b> Si deseas realizar más de una búsqueda a la vez, separa las diferentes asignaturas con el simbolo "-".
+  </div>
+  <form class ="contenedor-Buscador" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="GET">
+    <table id="buscador">
+      <tr>
+        <td><input type="text" name="busq" value="<?php echo isset($_GET['busq']) ? $_GET['busq'] : ''; ?>" placeholder="Introduce una asignatura o aula a buscar" /></td>
+        <!-- la funcion PHP isset determina si la variable introducida no es nula, devuelve un boleano que usamos para decidir que escribir en la linea -->
+        <td><input type="submit" value="Buscar" /></td>
+      </tr>
+    </table>
+  </form>
+  <div class="contenedor-Texto contenedor-Lista">
+  <div class="lista">
+  <?php
+    include 'funcion_acentos.php';
+
+    if(isset($_GET['busq'])){
+      $busq=isset($_GET['busq']) ? $_GET['busq'] : ''; /*Cadena vacia si no se ha introducido algo*/
+
+      if (strlen($busq)==0) {/*Verificamos que se haya introducido algo*/
+        exit;
+      }
+
+      $busq=trim($busq);
+      $busq=htmlspecialchars($busq);
+      $busq=remove_accents($busq);
+
+      /*Por como almecenamos los PDFs estos ifs son necesarios para la coincidencia de aulas
+      if(preg_match("/^([1-2]?[AL]$/"))
+      if(preg_match("/^(2L00([1-3]|[9-10]))$/",$palabra)){
+        $palabra="2L001-2-3-9-10.pdf"
+      }
+      */
+
+      $palabras_clave=explode('-',$busq);
+      $sql_busq="SELECT nombre,aula,lab,img_a,img_l FROM asignaturas WHERE ";
+
+      foreach ($palabras_clave as $palabra) {
+        /*Asegurar que todas son minusculas*/
+        $palabra=strtolower($palabra);
+        /*Hacer primer caracter mayusculas*/
+        $palabra=ucfirst($palabra);
+
+        $sql_busq.="nombre LIKE '%".$palabra."%' OR ";
+          /*"aula LIKE '%".$palabra."%' OR ".
+          "lab LIKE '%".$palabra."%' OR ".*/
+      }
+
+      $sql_busq=substr($sql_busq,0,strlen($sql_busq)-4); /*Eliminados el ultimo OR de la cadena de busqueda para evitar errores*/
+
+      $db=mysqli_connect('localhost','root','','base');
+
+      if(!$db){
+        echo "Error: No se pudo conectar a la base de datos.<br>";
+        exit;
+      }
+
+      $resultado=mysqli_query($db,$sql_busq);
+
+      if (mysqli_num_rows($resultado)==0) {
+        echo 'No se han encontrado coincidencias en su busqueda';
+      }
+
+      for ($i=0; $i < mysqli_num_rows($resultado) ; $i++) {
+        $fila=mysqli_fetch_array($resultado);
+
+        $aulas=$fila['aula'];
+        $labs=$fila['lab'];
+        $URL_aulas=$fila['img_a'];
+        $URL_labs=$fila['img_l'];
+
+        $naulas=explode(' ',$aulas);
+        $nURL_aulas=explode(' ',$URL_aulas);
+
+        echo '<div><u>Resultados para '.$fila['nombre'].'</u></div><div>INFO</div>';
+
+        if(count($naulas)==1 && count($nURL_aulas)==1){ /*numero de URLs y aulas coinciden*/
+          echo '<div>AULA '.$aulas.'</div>
+          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
+        }
+        elseif (count($naulas)==2 && count($nURL_aulas)==1) {/*varias aulas en un solo URL*/
+          echo '<div>AULA '.$naulas[0].'</div>
+          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>
+          <div>AULA '.$naulas[1].'</div>
+          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
+        }
+        elseif (count($naulas)==2 && count($nURL_aulas)==2) {/*dos aulas en dos URLs*/
+          echo '<div>AULA '.$naulas[0].'</div>
+          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+          <div>AULA '.$naulas[1].'</div>
+          <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
+        }
+        elseif (count($naulas)==3 && count($nURL_aulas)==2) {/*tres aulas en dos URLs*/
+          echo '<div>AULA '.$naulas[0].'</div>
+          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+          <div>AULA '.$naulas[1].'</div>
+          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+          <div>AULA '.$naulas[2].'</div>
+          <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
+        }
+        /*no se da el caso de que tengamos 3 URL, tampoco el que tengamos mas de dos ficheros de lab*/
+        if(strcmp($URL_labs,"ND")==0){
+          '<div>LABORATORIO '.$labs.' Inf. No Disponible</div>
+          <div>'.$URL_labs.'</div>';
+        }
+        elseif($labs!=NULL) {
+          echo '<div>LABORATORIO(S) '.$labs.'</div>
+          <div><a href="'.$URL_labs.'" target="_blanck">PDF</a></div>';
+        }
+
+        if(preg_match("/A0/",$aulas)){
+          echo '<div>PLANO DE LA PLANTA BAJA</div>
+          <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>';
+        }
+
+        if(preg_match("/A1/",$aulas) || preg_match("/1L/",$labs) || (strcmp("LABORATORIO DE ELECTRONICA",$labs)==0)){
+          echo '<div>PLANO DE PRIMERA PLANTA</div>
+          <div><a href="./pdfs/PRIMERA_PLANTA.pdf" target="_blanck">PDF</a></div>';
+        }
+
+        if(preg_match("/2L/",$labs)){
+          echo '<div>PLANO DE LA SEGUNDA PLANTA</div>
+          <div><a href="./pdfs/SEGUNDA_PLANTA.pdf" target="_blanck">PDF</a></div>';
+        }
+      }
+
+      unset($resultado);
+      mysqli_close($db);
+    }
+    else {
+      echo '<div>PLANO DE PLANTA BAJA</div>
+      <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>
       <div>PLANO DE LA PRIMERA PLANTA</div>
-      <div><a href="./pdfs/telecoinformatica-2.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/PRIMERA_PLANTA.pdf" target="_blanck">PDF</a></div>
       <div>PLANO DE LA SEGUNDA PLANTA</div>
-      <div><a href="./pdfs/telecoinformatica-3.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/SEGUNDA_PLANTA.pdf" target="_blanck">PDF</a></div>
       <div>AULAS A001 Y A002</div>
-      <div><a href="./pdfs/telecoinformatica-4.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A001-2.pdf" target="_blanck">PDF</a></div>
       <div>AULAS A003, A004, A005 Y A006</div>
-      <div><a href="./pdfs/telecoinformatica-5.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A003-4-5-6.pdf" target="_blanck">PDF</a></div>
       <div>AULA A007</div>
-      <div><a href="./pdfs/telecoinformatica-6.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A007.pdf" target="_blanck">PDF</a></div>
       <div>AULA A008</div>
-      <div><a href="./pdfs/telecoinformatica-7.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A008.pdf" target="_blanck">PDF</a></div>
       <div>AULA I+D</div>
-      <div><a href="./pdfs/telecoinformatica-8.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/I+D.pdf" target="_blanck">PDF</a></div>
       <div>SALA DE LECTURA</div>
-      <div><a href="./pdfs/telecoinformatica-9.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/SALA_LECTURA.pdf" target="_blanck">PDF</a></div>
       <div>AULA A101</div>
-      <div><a href="./pdfs/telecoinformatica-10.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A101.pdf" target="_blanck">PDF</a></div>
       <div>AULA A102</div>
-      <div><a href="./pdfs/telecoinformatica-11.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A102.pdf" target="_blanck">PDF</a></div>
       <div>AULA A102A</div>
-      <div><a href="./pdfs/telecoinformatica-12.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A102A.pdf" target="_blanck">PDF</a></div>
       <div>AULA A103</div>
-      <div><a href="./pdfs/telecoinformatica-13.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A103.pdf" target="_blanck">PDF</a></div>
       <div>AULA A104</div>
-      <div><a href="./pdfs/telecoinformatica-14.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A104.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 101</div>
-      <div><a href="./pdfs/telecoinformatica-15.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L001.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 102</div>
-      <div><a href="./pdfs/telecoinformatica-16.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L002.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 103</div>
-      <div><a href="./pdfs/telecoinformatica-17.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L003.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 104</div>
-      <div><a href="./pdfs/telecoinformatica-18.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L004.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 105</div>
-      <div><a href="./pdfs/telecoinformatica-19.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L005.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 106</div>
-      <div><a href="./pdfs/telecoinformatica-20.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L006.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 118</div>
-      <div><a href="./pdfs/telecoinformatica-21.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/1L018.pdf" target="_blanck">PDF</a></div>
       <div>AULA HEDY LAMARR</div>
-      <div><a href="./pdfs/telecoinformatica-22.pdf" target="_blanck">PDF</a></div>
-      <div>SALA DE GRADOS</div>
-      <div><a href="./pdfs/telecoinformatica-23.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/SALA_HEDY_LAMARR.pdf" target="_blanck">PDF</a></div>
+      <div>SALON DE GRADOS</div>
+      <div><a href="./pdfs/SALON_DE_GRADOS.pdf" target="_blanck">PDF</a></div>
       <div>AULA A009</div>
-      <div><a href="./pdfs/telecoinformatica-24.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A009.pdf" target="_blanck">PDF</a></div>
       <div>AULA A010</div>
-      <div><a href="./pdfs/telecoinformatica-25.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A010.pdf" target="_blanck">PDF</a></div>
       <div>AULAS A011, A012, A013 Y A014</div>
-      <div><a href="./pdfs/telecoinformatica-26.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A011-12-13-14.pdf" target="_blanck">PDF</a></div>
       <div>AULAS A015 Y A016</div>
-      <div><a href="./pdfs/telecoinformatica-27.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A015-16.pdf" target="_blanck">PDF</a></div>
       <div>AULAS A105, A106, A107, A109 Y A110</div>
-      <div><a href="./pdfs/telecoinformatica-28.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A105-6-7-9-10.pdf" target="_blanck">PDF</a></div>
       <div>AULA 108</div>
-      <div><a href="./pdfs/telecoinformatica-29.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/A108.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO DE ELECTRONICA</div>
-      <div><a href="./pdfs/telecoinformatica-30.pdf" target="_blanck">PDF</a></div>
-      <div>LABORATORIOS 1L019, 1L020, 2L001, 2L002, 2L003, 2L009 Y 2L010</div>
-      <div><a href="./pdfs/telecoinformatica-31.pdf" target="_blanck">PDF</a></div>
-      <div>LABORATORIOS 1L023, 2L004, 2L005, 2L006, 2L007 Y 2L008</div>
-      <div><a href="./pdfs/telecoinformatica-32.pdf" target="_blanck">PDF</a></div>
+      <div><a href="./pdfs/LABORATORIO_DE_ELECTRONICA.pdf" target="_blanck">PDF</a></div>
+      <div>LABORATORIOS 2L001, 2L002, 2L003, 2L009 Y 2L010</div>
+      <div><a href="./pdfs/2L001-2-3-9-10.pdf" target="_blanck">PDF</a></div>
+      <div>LABORATORIOS 2L004, 2L005, 2L006, 2L007 Y 2L008</div>
+      <div><a href="./pdfs/2L004-5-6-7-8.pdf" target="_blanck">PDF</a></div>
       <div>LABORATORIO 013</div>
-      <div><a href="./pdfs/telecoinformatica-33.pdf" target="_blanck">PDF</a></div>
-    </div>
+      <div><a href="./pdfs/1L013.pdf" target="_blanck">PDF</a></div>';
+    }
+    ?>
+  </div>
   </div>
 
   <?php
