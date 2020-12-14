@@ -44,7 +44,7 @@ footer{ /*Estilo del footer*/
   cursor: pointer; /*aparece mano de selección cuando se pone el raton encima*/
 }
 
-.flexInicio > div#boton1, div#boton2, div#boton3{ /*estilo divs (padres de botones) del flex de la barra de inicio*/
+.flexInicio > div#boton1, div#boton2, div#boton3, div#boton4, div#boton5{ /*estilo divs (padres de botones) del flex de la barra de inicio*/
   flex: 1 1 auto;
   margin: 2px;
   background-color: gray;

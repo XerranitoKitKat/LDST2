@@ -28,6 +28,7 @@
   ?>
   <div class = "contenedorPrincipal">
     <?php #comprobamos que podamos acceder a la base de datos
+    session_start();
     $bd	=	mysqli_connect("localhost",	"root",	"");
 	  mysqli_select_db($bd,	"bd");
     if	(mysqli_connect_errno())	{
@@ -42,7 +43,7 @@
     }
     for ($i = 0; $i < mysqli_num_rows($resultado);$i++){
       $fila2 = mysqli_fetch_array($resultado);
-      if ($fila2['email'] === 'josdie@tel.uva.es'){ #aqui comprobaremos que se escoge a la persona correcta
+      if ($fila2['email'] === $_SESSION["user"]){ #aqui comprobaremos que se escoge a la persona correcta
         $fila = $fila2;                               #a mostrar
       }
     }
@@ -109,17 +110,17 @@
     $query	=	"SELECT * FROM	test";
     $resultado	=	mysqli_query($bd,	$query);
     if(!$resultado){
-      echo	"Usted no ha tenido ningun positivo todavia	<br>";
+      echo	"Error con la base de datos";
       exit();
     }
     $id = 0;
     for($i = 0; $i < mysqli_num_rows($resultado); $i++){
         $fila = mysqli_fetch_array($resultado); #aqui cojo la ultima entrada de la base de datos de una misma persona (por si ha estado mas de una vez confinado)
-        if(($id < $fila['identificador'])&&($fila['email']=="josdie@tel.uva.es")){
-          $id = $fila['identificador'];
+        if(($id < $fila['id'])&&($fila['email']== $_SESSION["user"])){
+          $id = $fila['id'];
         }
-        if(($id = $fila['identificador'])&&($fila['email']=="josdie@tel.uva.es")){
-          $fila2 = $fila;
+        if(($id = $fila['id'])&&($fila['email']== $_SESSION["user"])){
+          $fila2 = $fila;# AQUI TENDRE QUE MOSTRAR EL HISTORIAL
         }
     }
     mysqli_free_result($resultado);
@@ -127,12 +128,58 @@
     $fecha_actual_day = $fecha_actual['mday'];
     $fecha_actual_mon = $fecha_actual['mon'];
     $fecha_actual_year = $fecha_actual['year'];
-    echo $fecha_actual_day.$fecha_actual_mon.$fecha_actual_year;
-    if(($fila2 == NULL)||($fila2['fecha_desconf'] < $fecha_actual)){ #Esto indica que no esta confinado, o que no ha estado confinado en ningun momento
+    $desconf = explode("-",$fila2['f_descon']);
 
+    if(($fila2 == NULL)||($desconf[0] < $fecha_actual_year)||(($desconf[1] < $fecha_actual_mon)&&($desconf[0] == $fecha_actual_year))||(($desconf[2] < $fecha_actual_day)&&($desconf[0] == $fecha_actual_year)&&($desconf[1] == $fecha_actual_mon))){ #Esto indica que no esta confinado, o que no ha estado confinado en ningun momento
+      if(($fila2 != NULL)&&($fila2['comentario']==NULL)){
+        #ESTO PARA METER UN COMENTARIO QUE ME AYUDA MARIA A HACER EL CUADRO DEL TEXTO
+      }
+      echo '<form method = "post">
+      <input type = "radio" name="pcr" value="Indicar positivo en COVID">Indicar positivo en COVID
+      <input type = "Radio" name="pcr" value="Mostrar historial">Mostrar historial<br>
+      <input type = "submit" value="Enviar"></form>';
+      if($_POST["pcr"] === "Indicar positivo en COVID"){
+        $pcr1=date("Y-n-j");
+        $pcr2=date("Y-n-j", strtotime($pcr1."+ 10 days"));
+        $des=date("Y-n-j", strtotime($pcr1."+ 15 days"));
+        $query	=	"INSERT INTO test(email, f_test1, f_test2, f_descon) VALUES ('josdie@tel.uva.es','".$pcr1."','".$pcr2."','".$des."')";
+        $resultado	=	mysqli_query($bd,	$query);
+      }
+      else if($_POST["pcr"] === "Mostrar historial"){
+        $query	=	"SELECT * FROM	test";
+        $resultado	=	mysqli_query($bd,	$query);
+        $id = 0;
+        for($i = 0; $i < mysqli_num_rows($resultado); $i++){
+            $fila = mysqli_fetch_array($resultado); #aqui cojo la ultima entrada de la base de datos de una misma persona (por si ha estado mas de una vez confinado)
+            if(($id < $fila['id'])&&($fila['email']==$_SESSION["user"])){
+              $id = $fila['id'];
+            }
+            if(($id = $fila['id'])&&($fila['email']==$_SESSION["user"])){
+              $fila2 = $fila;# AQUI TENDRE QUE MOSTRAR EL HISTORIAL
+              $desconf = explode("-",$fila2['f_descon']);
+          		$segundaPCR = explode("-",$fila2['f_test2']);
+          		$primeraPCR = explode("-",$fila2['f_test1']);
+              $a = $desconf[2]; #pongo las variables asi, porque las utilizao como super globales
+              $b = $segundaPCR[2]; #y me estaba dando problemas usar los arrays!
+              $c = $primeraPCR[2];
+              include 'calendario.php';
+            }
+        }
+        mysqli_free_result($resultado);
+        if($id == 0){echo'No tenemos constancia de que haya estado confinado';}
+      }
     }
-    if(($fila2 != NULL)&&($fila2['fecha_desconf'] > $fecha_actual)){ #OJO COMPROBAR QUE COJO BIEN LAS FECHAS, O SI LAS COJO!  ADEMAS DE HACERLAS GLOBALES PARA MOSTRARLAS EN EL CALENDARIO
+    else{ #OJO COMPROBAR QUE COJO BIEN LAS FECHAS, O SI LAS COJO!  ADEMAS DE HACERLAS GLOBALES PARA MOSTRARLAS EN EL CALENDARIO
+      $desconf = explode("-",$fila2['f_descon']);
+      $segundaPCR = explode("-",$fila2['f_test2']);
+      $primeraPCR = explode("-",$fila2['f_test1']);
+      $a = $desconf[2]; #pongo las variables asi, porque las utilizao como super globales
+      $b = $segundaPCR[2]; #y me estaba dando problemas usar los arrays!
+      $c = $primeraPCR[2];
       include 'calendario.php';
+      echo '<div class="contenedorPrincipal"></br> Amarillo: dia que indicaste el positivo
+      </br> Rojo: fecha de la segunda PCR
+      </br> Verde: dia de desconfinamiento</br></div>';
     }
     unset($fila,$fila2);
     ?>

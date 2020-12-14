@@ -70,16 +70,16 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 				echo "<td>&nbsp;</td>"; # Mostramos celdas vacias en caso de que el mes no acabe en domingo o no empiece en lunes
 			}else{
 
-				if($day==$diaActual){
+				if($day==$GLOBALS["c"]){
 					echo "<td class='primerTest'>$day</td>";
 					}
-				else if($day==($diaActual + 10)){
+				else if($day==$GLOBALS["b"]){
 					echo "<td class='segundoTest'>$day</td>";
 					}
-				else if($day==($diaActual + 15)){
+				else if($day==$GLOBALS["a"]){
 					echo "<td class='desconfinamiento'>$day</td>";
 					}
-				else if($day!=$diaActual){
+				else{
 					echo "<td>$day</td>";
 				}
 				$day++;
