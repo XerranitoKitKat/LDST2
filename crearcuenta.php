@@ -19,16 +19,14 @@
 
   #contenedor_asig{
       margin-left: 35px;
-      max-height: 230px;
+      max-height: 215px;
       overflow: auto;
   }
 
   h2{
     text-align: center;
   }
-  .contenedor{
-
-  }
+  .contenedor{}
 
   .elem {
     margin-left: 20px;
@@ -63,8 +61,8 @@
 <?php
   include 'cabecera.php';
 
-  $nombreErr = $apellErr = $correouvaErr = $passwdErr = $reppasswdErr = $dniErr = $fnacimientoErr = $telefonoErr = $checkboxErr = "";
-  $nombre = $apell = $correouva = $passwd = $reppasswd = $dni = $fnacimiento = $telefono = "";
+  $nombreErr = $apellErr = $correouvaErr = $passwdErr = $reppasswdErr = $dniErr = $fnacimientoErr = $telefonoErr = $rolErr = $checkboxErr = "";
+  $nombre = $apell = $correouva = $passwd = $reppasswd = $dni = $fnacimiento = $telefono = $rol = "";
   $error=false;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -162,6 +160,12 @@
       $checkboxErr = "Tiene que cursarse al menos una asignatura";
       $error=true;
     }*/
+    if (empty($_POST["rol"])) {
+      $rolErr = "Es necesario indicar si se es profesor o alumno";
+      $error=true;
+    } else {
+      $rol = test_input($_POST["rol"]);
+    }
 
     if($error==false && count($_POST)<=8){/*No hay error pero no se han seleccionado asignatura*/
       $checkboxErr = "Es necesario que seleccione al menos una de las asignaturas";
@@ -179,6 +183,11 @@
   if($isOneSelected==false){
   $checkboxErr = "Es necesario que curse al menos una de las asignaturas";
   }*/
+/*  if	($_POST)	{
+  				echo	'<pre>';
+  				echo	print_r($_POST,	true);
+  				echo	'</pre>';
+  }*/
   redireccion($error);
   }
 
@@ -191,6 +200,23 @@
 
   function redireccion($error){
     if($error==false){
+      $nombre	=	addslashes($nombre);
+      $apell	=	addslashes($apell);
+      $correouva	=	addslashes($correouva);
+      $passwd	=	addslashes($passwd);
+      $dni=	addslashes($dni);
+      $fnacimiento=	addslashes($fnacimiento);
+      $telefono	=	addslashes($telefono);
+
+      $db=mysqli_connect('localhost','root','','base');
+      if(!$db){
+         echo "Error: No se pudo conectar a la base de datos.<br>";
+         exit;
+       }
+       $query="insert into personas values(".$correouva.", ".$nombre.", ".$apell.", ".$dni.", ".$fnacimiento.", ".$passwd.", ".$telefono.",  .$roll.);";
+       $results=mysqli_query($db,$query);
+
+       //introducir asignaturas en la tabla de personas-asignautas
 
       echo '<script>window.location.href = "./perfil.php"</script>';
     }
@@ -241,55 +267,73 @@
       <input type="text" id="telefono" name="telefono" value="<?php echo $telefono;?>"><br>
       <span class="error"> <?php echo $telefonoErr;?></span>
     </div><br>
-    <div class="elem" id="contenedor_asig">
-      <i>Asignaturas de Curso 1</i><br>
-      <label><input type="checkbox" name="Algebra Lineal">Algebra Lineal</label><br>
-      <label><input type="checkbox" name="Calculo">Calculo</label><br>
-      <label><input type="checkbox" name="Circuitos electricos">Circuitos electricos</label><br>
-      <label><input type="checkbox" name="Programacion">Programacion</label><br>
-      <label><input type="checkbox" name="Economia">Economia</label><br>
-      <label><input type="checkbox" name="Fundamentos de Electronica">Fundamentos de Electronica</label><br>
-      <label><input type="checkbox" name="Senales Aleatorias y Ruido">Señales Aleatorias y Ruido</label><br>
-      <label><input type="checkbox" name="Sistemas Lineales">Sistemas Lineales</label><br>
-      <label><input type="checkbox" name="Fisica">Fisica</label><br>
-      <label><input type="checkbox" name="Fundamentos de Ordenadores y Sistemas Operativos">Fundamentos de Ordenadores y Sistemas Operativos</label><br><br>
-
-      <i>Asignaturas de Curso 2</i><br>
-      <label><input type="checkbox" name="Ampliacion de Matematicas">Ampliacion de Matematicas</label><br>
-      <label><input type="checkbox" name="Teoria de la Comunicacion">Teoria de la Comunicacion</label><br>
-      <label><input type="checkbox" name="Circuitos Electronicos Analogicos">Circuitos Electronicos Analogicos</label><br>
-      <label><input type="checkbox" name="Circuitos Electronicos Digitales">Circuitos Electronicos Digitales</label><br>
-      <label><input type="checkbox" name="Arquitectura de Redes, Sistemas y Servicios">Arquitectura de Redes, Sistemas y Servicios</label><br>
-      <label><input type="checkbox" name="Campos Electromagneticos">Campos Electromagneticos</label><br>
-      <label><input type="checkbox" name="Sistemas de Comunicacion">Sistemas de Comunicacion</label><br>
-      <label><input type="checkbox" name="Ingenieria de Sistemas Software">Ingenieria de Sistemas Software</label><br>
-      <label><input type="checkbox" name="Redes y Servicios Telematicos">Redes y Servicios Telematicos</label><br>
-      <label><input type="checkbox" name="Sistemas Electronicos Basados en Microprocesador">Sistemas Electronicos Basados en Microprocesador</label><br><br>
-
-      <i>Asignaturas de Curso 3</i><br>
-      <label><input type="checkbox" name="Teoria de Campos Guiados">Teoria de Campos Guiados</label><br>
-      <label><input type="checkbox" name="Ingenieria de Protocolos en Redes Telematicas">Ingenieria de Protocolos en Redes Telematicas</label><br>
-      <label><input type="checkbox" name="Desarrollo de Aplicaciones Distribuidas">Desarrollo de Aplicaciones Distribuidas</label><br>
-      <label><input type="checkbox" name="Subsistemas Electronicos de Comunicaciones">Subsistemas Electronicos de Comunicaciones</label><br>
-      <label><input type="checkbox" name="Fundamentos de Transmision por radio">Fundamentos de Transmision por radio</label><br>
-      <label><input type="checkbox" name="Tratamiento Digital de la Senal">Tratamiento Digital de la Señal</label><br>
-      <label><input type="checkbox" name="Sistemas de Comunicaciones Guiadas">Sistemas de Comunicaciones Guiadas</label><br>
-      <label><input type="checkbox" name="Microelectronica de Radio Frecuencia">Microelectronica de Radio Frecuencia</label><br>
-      <label><input type="checkbox" name="Diseneo de Circuitos Digitales para Comunicaciones">Diseño de Circuitos Digitales para Comunicaciones</label><br>
-      <label><input type="checkbox" name="Administracion y Gestion de Redes y Servicios Telematicos">Administracion y Gestion de Redes y Servicios Telematicos</label><br><br>
-
-      <i>Asignaturas de Curso 4</i><br>
-      <label><input type="checkbox" name="Metodos Numericos en Telecomunicacion">Metodos Numericos en Telecomunicacion</label><br>
-      <label><input type="checkbox" name="Instrumentacion y Equipos Electronicos">Instrumentacion y Equipos Electronicos</label><br>
-      <label><input type="checkbox" name="Fundamentos de Sonido e Imagen">Fundamentos de Sonido e Imagen</label><br>
-      <label><input type="checkbox" name="Diseno de Circuitos Integrados para Comunicaciones">Diseño de Circuitos Integrados para Comunicaciones</label><br>
-      <label><input type="checkbox" name="Laboratorio de Desarrollo de Sistemas Telematicos">Laboratorio de Desarrollo de Sistemas Telematicos</label><br>
-      <label><input type="checkbox" name="Ingenieria de Trafico en Redes Telematicas">Ingenieria de Trafico en Redes Telematicas</label><br>
-      <label><input type="checkbox" name="Teoria de la Deteccion y la Estimacion">Teoria de la Deteccion y la Estimacion</label><br>
-      <label><input type="checkbox" name="Sistemas de Comunicaciones Opticas">Sistemas de Comunicaciones Opticas</label><br>
-      <label><input type="checkbox" name="Sistemas de Telecomunicación por Radio">Sistemas de Telecomunicación por Radio</label><br>
-      <label><input type="checkbox" name="Desarrollo Practico de Sistemas Electronicos">Desarrollo Practico de Sistemas Electronicos</label><br><br>
+    <div class="elem">
+      <label for="telefono">Soy: </label>
+      <input type="radio" id="profesor" name="rol" value="1">
+      <label for="profesor">Profesor</label>
+      <input type="radio" id="alumno" name="rol" value="2">
+      <label for="alumno">Alumno</label><br>
+      <span class="error"> <?php echo $rolErr;?></span>
     </div><br>
+    <div class="elem" id="contenedor_asig">
+    <?php
+       $db=mysqli_connect('localhost','root','','base');
+       if(!$db){
+          echo "Error: No se pudo conectar a la base de datos.<br>";
+          exit;
+        }
+        $query=" SELECT codigo, nombre, curso from asignaturas";
+        $results=mysqli_query($db,$query);
+
+        if (mysqli_num_rows($results)==0) {
+          echo 'No se han encontrado coincidencias en su busqueda';
+        }
+        $cont=1;
+        for ($i=0; $i < mysqli_num_rows($results) ; $i++) {
+          $fila=mysqli_fetch_array($results);
+
+          $codigo=$fila['codigo'];
+          $asig=$fila['nombre'];
+          $curso=$fila['curso'];
+
+          if($curso==1){
+            if($cont==1){
+            echo '<i>Asignaturas de Curso 1</i><br>';
+            $cont=$cont+1;
+            }
+            echo ' <label><input type="checkbox" name="asignaturas[]" value="'.$codigo.'">'.$asig.'</label><br>';
+
+          }
+          elseif($curso==2){
+            if($cont==2){
+            echo '<i>Asignaturas de Curso 2</i><br>';
+            $cont=$cont+1;
+            }
+            echo ' <label><input type="checkbox" name="asignaturas[]" value="'.$codigo.'">'.$asig.'</label><br>';
+
+          }
+          elseif($curso==3){
+            if($cont==3){
+            echo '<i>Asignaturas de Curso 3</i><br>';
+            $cont=$cont+1;
+            }
+            echo ' <label><input type="checkbox" name="asignaturas[]" value="'.$codigo.'">'.$asig.'</label><br>';
+
+          }
+          elseif($curso==4){
+            if($cont==4){
+            echo '<i>Asignaturas de Curso 4</i><br>';
+            $cont=$cont+1;
+            }
+            echo ' <label><input type="checkbox" name="asignaturas[]" value="'.$codigo.'">'.$asig.'</label><br>';
+
+          }
+
+        }
+        mysqli_free_result($results);
+        mysqli_close($db);
+        ?>
+        </div><br>
     <span class="error"> <?php echo $checkboxErr;?></span>
   </div><br>
   <div id="botonpeq" style="float:right;">
