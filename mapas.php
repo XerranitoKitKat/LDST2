@@ -249,10 +249,11 @@
         }
       }
 
-      unset($resultado);
+      mysqli_free_result($resultado);
       mysqli_close($db);
     }
     else {
+      //inicialmente se muestran todas las aulas y pisos de la escuela, aunque en la tabla de asignaturas solo disponemos de los planos de teleco general.
       echo '<div>PLANO DE PLANTA BAJA</div>
       <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>
       <div>PLANO DE LA PRIMERA PLANTA</div>

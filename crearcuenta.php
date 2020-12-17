@@ -26,7 +26,6 @@
   h2{
     text-align: center;
   }
-  .contenedor{}
 
   .elem {
     margin-left: 20px;
@@ -61,7 +60,7 @@
 <?php
   include 'cabecera.php';
 
-  $nombreErr = $apellErr = $correouvaErr = $passwdErr = $reppasswdErr = $dniErr = $fnacimientoErr = $telefonoErr = $rolErr = $checkboxErr = "";
+  $nombreErr = $apellErr = $correouvaErr = $passwdErr = $reppasswdErr = $dniErr = $fnacimientoErr = $telefonoErr = $rolErr = $checkboxErr = $userErr = "";
   $nombre = $apell = $correouva = $passwd = $reppasswd = $dni = $fnacimiento = $telefono = $rol = "";
   $error=false;
 
@@ -171,6 +170,12 @@
       $checkboxErr = "Es necesario que seleccione al menos una de las asignaturas";
       $error=true;
     }
+
+    if(count($_POST)<10){
+      $checkboxErr = "Es necesario estar matriculado en al menos una asignatura";
+      $error=true;
+    }
+    print_r($_POST);
     /*$isOneSelected=false;
     $checkboxArray = $_POST;
     echo print_r(checkbox);
@@ -188,7 +193,11 @@
   				echo	print_r($_POST,	true);
   				echo	'</pre>';
   }*/
-  redireccion($error);
+    if(!$error){
+      if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){
+        $userErr = "El email introducido ya existe";
+      }
+    }
   }
 
   function test_input($data) {
@@ -198,29 +207,57 @@
     return $data;
   }
 
-  function redireccion($error){
-    if($error==false){
-      $nombre	=	addslashes($nombre);
-      $apell	=	addslashes($apell);
-      $correouva	=	addslashes($correouva);
-      $passwd	=	addslashes($passwd);
-      $dni=	addslashes($dni);
-      $fnacimiento=	addslashes($fnacimiento);
-      $telefono	=	addslashes($telefono);
+  function crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$asignaturas){
+    $nombre	=	addslashes($nombre);
+    $apell	=	addslashes($apell);
+    $correouva	=	addslashes($correouva);
+    $passwd	=	addslashes($passwd);
+    $dni=	addslashes($dni);
+    $fnacimiento=	addslashes($fnacimiento);
+    $telefono	=	addslashes($telefono);
 
-      $db=mysqli_connect('localhost','root','','base');
-      if(!$db){
-         echo "Error: No se pudo conectar a la base de datos.<br>";
-         exit;
-       }
-       $query="insert into personas values(".$correouva.", ".$nombre.", ".$apell.", ".$dni.", ".$fnacimiento.", ".$passwd.", ".$telefono.",  .$roll.);";
-       $results=mysqli_query($db,$query);
-
-       //introducir asignaturas en la tabla de personas-asignautas
-
-      echo '<script>window.location.href = "./perfil.php"</script>';
+    $db=mysqli_connect('localhost','root','','base');
+    if(!$db){
+      echo "Error: No se pudo conectar a la base de datos.<br>";
+      exit;
     }
 
+    if(comprobarUsuario($correouva,$db)){
+      $query="INSERT INTO personas VALUES('".$correouva."', '".$nombre."', '".$apell."', '".$dni."', '".$fnacimiento."', '".$passwd."', '".$telefono."', '$rol')";
+      $results=mysqli_query($db,$query);
+
+      $query="INSERT INTO per_asig VALUES";
+
+      foreach($asignaturas as $value){
+        $aux=$query."('".$correouva."', '$value')";
+        $results=mysqli_query($db,$aux);
+      }
+      @mysqli_free_result($results);
+      mysqli_close($db);
+      return false;
+    }
+    else{
+      mysqli_close($db);
+      return true;
+    }
+
+    //introducir asignaturas en la tabla de personas-asignautas
+
+    //echo '<script>window.location.href = "./perfil.php"</script>';
+  }
+
+  function comprobarUsuario($correouva,$db){
+    $query="SELECT email FROM personas";
+    $results=mysqli_query($db,$query);
+
+    foreach($results as $email){
+      if(strcmp($email['email'],$correouva)==0){ //miro si ya hay un usuario registrado con esa clave primaria (email)
+        @mysqli_free_result($results);
+        return false;//false si lo hay
+      }
+    }
+    @mysqli_free_result($results);
+    return true;//true si no
   }
 ?>
 
@@ -328,13 +365,13 @@
             echo ' <label><input type="checkbox" name="asignaturas[]" value="'.$codigo.'">'.$asig.'</label><br>';
 
           }
-
         }
         mysqli_free_result($results);
         mysqli_close($db);
         ?>
         </div><br>
     <span class="error"> <?php echo $checkboxErr;?></span>
+    <span class="error"> <?php echo $userErr;?></span>
   </div><br>
   <div id="botonpeq" style="float:right;">
     <button type="submit" form="formulario" value="crear" style="font-family:sans-serif;font-size:14px;">Crear Cuenta</button>
