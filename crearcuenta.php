@@ -59,6 +59,7 @@
 <body>
 <?php
   include 'cabecera.php';
+  include 'funcion_acentos.php';
 
   $nombreErr = $apellErr = $correouvaErr = $passwdErr = $reppasswdErr = $dniErr = $fnacimientoErr = $telefonoErr = $rolErr = $checkboxErr = $userErr = "";
   $nombre = $apell = $correouva = $passwd = $reppasswd = $dni = $fnacimiento = $telefono = $rol = "";
@@ -70,6 +71,7 @@
       $error=true;
     } else {
       $nombre = test_input($_POST["nombre"]);
+      $nombre=remove_accents($nombre);
       if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre)) {
         $nombreErr = "Solo se permiten letras y espacios en blanco";
         $error=true;
@@ -81,6 +83,7 @@
       $error=true;
     } else {
       $apell = test_input($_POST["apell"]);
+      $apell=remove_accents($apell);
       if (!preg_match("/^[a-zA-Z-' ]*$/",$apell)) {
         $apellErr = "Solo se permiten letras y espacios en blanco";
         $error=true;
@@ -103,8 +106,9 @@
       $error=true;
     } else {
       $passwd = test_input($_POST["passwd"]);
-      if( strlen($passwd ) < 8 ) {
-        $passwdErr= "La contrase&ntildea es muy corta (al menos 8 caracteres)";
+      $passwd=remove_accents($passwd);
+      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd)) {
+        $passwdErr= "La contrase&ntildea tiene que tener como	mínimo 8	caracteres cualesquiera y al menos tiene que contener una mayuscula, una minuscula y un numero";
         $error=true;
       }
     }
@@ -114,6 +118,7 @@
       $error=true;
     } else {
       $reppasswd = test_input($_POST["reppasswd"]);
+      $reppasswd=remove_accents($reppasswd);
       if( strlen($passwd ) > 7 ) {
         if($reppasswd != $passwd) {
           $reppasswdErr= "Las contrase&ntildeas no coinciden";
@@ -175,7 +180,7 @@
       $checkboxErr = "Es necesario estar matriculado en al menos una asignatura";
       $error=true;
     }
-    print_r($_POST);
+    //print_r($_POST);
     /*$isOneSelected=false;
     $checkboxArray = $_POST;
     echo print_r(checkbox);
@@ -212,6 +217,7 @@
     $apell	=	addslashes($apell);
     $correouva	=	addslashes($correouva);
     $passwd	=	addslashes($passwd);
+    echo $passwd;
     $dni=	addslashes($dni);
     $fnacimiento=	addslashes($fnacimiento);
     $telefono	=	addslashes($telefono);
