@@ -1,4 +1,10 @@
 <?php
+session_start();
+if(isset($_SESSION["user"])){
+  $user = "Perfil";
+}else{
+  $user = "Inicio de Sesion / Registro";
+}
 echo '<script src=./scripts/navegacion.js>
 </script>
 <div class= "flexInicio">
@@ -15,10 +21,18 @@ echo '<script src=./scripts/navegacion.js>
     </button>
   </div>
 
-  <div id="boton3">
-    <button class="botoninicio" type="button" onClick="goSesion()" title="Inicio de sesion o registro">
-      <h2>Inicio de sesion</h2>
+  <div id="boton3">';
+  if($user == "Perfil"){
+    echo '<button class="botoninicio" type="button" onClick="goPerfil()" title="Perfil">
+      <h2>'.$user.'</h2>
     </button>
-  </div>
+    </div>
+  </div>';
+}else{
+  echo '<button class="botoninicio" type="button" onClick="goSesion()" title="Inicio de sesion o registro">
+    <h2>'.$user.'</h2>
+  </button>
+</div>
 </div>';
+}
 ?>

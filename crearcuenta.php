@@ -216,7 +216,7 @@
     $fnacimiento=	addslashes($fnacimiento);
     $telefono	=	addslashes($telefono);
 
-    $db=mysqli_connect('localhost','root','','base');
+    $db=mysqli_connect('localhost','root','','bd');
     if(!$db){
       echo "Error: No se pudo conectar a la base de datos.<br>";
       exit;
@@ -314,7 +314,7 @@
     </div><br>
     <div class="elem" id="contenedor_asig">
     <?php
-       $db=mysqli_connect('localhost','root','','base');
+       $db=mysqli_connect('localhost','root','','bd');
        if(!$db){
           echo "Error: No se pudo conectar a la base de datos.<br>";
           exit;
