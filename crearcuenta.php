@@ -202,6 +202,9 @@
       if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){
         $userErr = "El email introducido ya existe";
       }
+      else {
+        echo '<script>window.location.href = "./sesion.php"</script>';
+      }
     }
   }
 
@@ -217,7 +220,6 @@
     $apell	=	addslashes($apell);
     $correouva	=	addslashes($correouva);
     $passwd	=	addslashes($passwd);
-    echo $passwd;
     $dni=	addslashes($dni);
     $fnacimiento=	addslashes($fnacimiento);
     $telefono	=	addslashes($telefono);
@@ -248,8 +250,6 @@
     }
 
     //introducir asignaturas en la tabla de personas-asignautas
-
-    //echo '<script>window.location.href = "./perfil.php"</script>';
   }
 
   function comprobarUsuario($correouva,$db){

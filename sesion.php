@@ -34,7 +34,6 @@
   <input type="text" id="user" name="user" value=""><br>
   <label for="passwd">Contraseña:</label><br>
   <input type="password" id="passwd" name="passwd" value=""><br><br>
-  <label><input type="checkbox" name="recordar">Recordarme</label><br><br>
   <input type="submit" value="Iniciar sesión">
   </form> <br>
   <p> ¿No tienes cuenta? <a href="./crearcuenta.php" style="color:DodgerBlue"> Registrate en Telecovid </a></p>

@@ -173,7 +173,7 @@
 
       $sql_busq=substr($sql_busq,0,strlen($sql_busq)-4); /*Eliminados el ultimo OR de la cadena de busqueda para evitar errores*/
 
-      $db=mysqli_connect('localhost','root','','base');
+      $db=mysqli_connect('localhost','root','','bd');
 
       if(!$db){
         echo "Error: No se pudo conectar a la base de datos.<br>";
