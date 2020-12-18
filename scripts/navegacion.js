@@ -13,3 +13,6 @@ function goMapas(){
 function goSesion(){
   document.location='./sesion.php'
 }
+function goPerfil(){
+  document.location='./perfil.php'
+}

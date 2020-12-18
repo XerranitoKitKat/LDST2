@@ -56,13 +56,11 @@
     if (($fila2['email'] === $_POST["user"])&&($fila2['passwd'] === $_POST["passwd"])){ #aqui comprobaremos que se escoge a la persona correcta a mostrar
       session_start();
       $_SESSION["user"] = $_POST["user"];
+      header('Location: perfil.php');
     }
   }
   unset($_POST);
   mysqli_free_result($resultado);
-  if(isset($_SESSION)){
-    echo '<a href = "perfil.php">Perfil</a>';
-  }
   ?>
 </div>
 
