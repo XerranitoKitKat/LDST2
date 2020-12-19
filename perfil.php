@@ -28,7 +28,6 @@
   ?>
   <div class = "contenedorPrincipal">
     <?php #comprobamos que podamos acceder a la base de datos
-    #session_start();
     $bd	=	mysqli_connect("localhost",	"root",	"");
 	  mysqli_select_db($bd,	"bd");
     if	(mysqli_connect_errno())	{
@@ -125,6 +124,7 @@
         }
     }
     if($fila2 != 0){
+      unset($_POST);
       mysqli_free_result($resultado);
       $fecha_actual = getdate(time()); #OJO, MIRAR LO DE LAS FECHAS, PARA COGERLAS BIEN
       $fecha_actual_day = $fecha_actual['mday'];
@@ -141,6 +141,7 @@
         <input type = "Radio" name="pcr" value="Mostrar historial">Mostrar historial<br>
         <input type = "submit" value="Enviar"></form>';
         if($_POST["pcr"] === "Indicar positivo en COVID"){
+          unset($_POST);
           $pcr1=date("Y-n-j");
           $pcr2=date("Y-n-j", strtotime($pcr1."+ 10 days"));
           $des=date("Y-n-j", strtotime($pcr1."+ 15 days"));
@@ -149,6 +150,7 @@
           $resultado	=	mysqli_query($bd,	$query);
         }
         else if($_POST["pcr"] === "Mostrar historial"){
+          unset($_POST);
           $query	=	"SELECT * FROM	test";
           $resultado	=	mysqli_query($bd,	$query);
           $id = 0;
@@ -180,16 +182,17 @@
         $b = $segundaPCR[2]; #y me estaba dando problemas usar los arrays!
         $c = $primeraPCR[2];
         include 'calendario.php';
-        echo '<div class="contenedorPrincipal"></br> Amarillo: dia que indicaste el positivo
+        echo '<div class="contenedorPrincipal">
+        </br> Naranja: fecha actual
+        </br> Amarillo: dia que indicaste el positivo
         </br> Rojo: fecha de la segunda PCR
-        </br> Verde: dia de desconfinamiento</br></div>';
+        </br>Verde: dia de desconfinamiento (Si el dia en verde está antes que el dia amarillo, indica que la fecha de desconfinamiento es del siguiente mes)</br></div>';
       }
       unset($fila,$fila2);
     }
     else if($fila2 == 0){
       echo '<form method = "post">
       <input type = "radio" name="pcr" value="Indicar positivo en COVID">Indicar positivo en COVID
-      <input type = "Radio" name="pcr" value="Mostrar historial">Mostrar historial<br>
       <input type = "submit" value="Enviar"></form>';
       if($_POST["pcr"] === "Indicar positivo en COVID"){
         $pcr1=date("Y-n-j");

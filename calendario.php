@@ -46,6 +46,9 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 		#calendar .desconfinamiento{
 			background-color:green;
 		}
+		#calendar .actual{
+			background-color:orange;
+		}
 	</style>
 </head>
 
@@ -79,6 +82,9 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 				else if($day==$GLOBALS["a"]){
 					echo "<td class='desconfinamiento'>$day</td>";
 					}
+					else if($day==$diaActual){
+						echo "<td class='actual'>$day</td>";
+						}
 				else{
 					echo "<td>$day</td>";
 				}
