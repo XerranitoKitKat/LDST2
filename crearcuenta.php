@@ -66,60 +66,60 @@
   $error=false;
 
   if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (empty($_POST["nombre"])) {
+    if (empty($_POST["nombre"])) { //Comprobamos si se ha rellenado el campo de nombre
       $nombreErr = "El campo de Nombre es obligatorio";
       $error=true;
     } else {
       $nombre = test_input($_POST["nombre"]);
       $nombre=remove_accents($nombre);
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre)) {
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre)) {  //Aseguramos que se haya introducido un nombre valido
         $nombreErr = "Solo se permiten letras y espacios en blanco";
         $error=true;
       }
     }
 
-    if (empty($_POST["apell"])) {
+    if (empty($_POST["apell"])) { //Comprobamos si se ha rellenado el campo de apellidos
       $apellErr = "El campo de Apellidos es obligatorio";
       $error=true;
     } else {
       $apell = test_input($_POST["apell"]);
-      $apell=remove_accents($apell);
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell)) {
+      $apell=remove_accents($apell); //quitamos acentos o eñes para que no haya problemas en la base de datos
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell)) { //Aseguramos que se haya introducido un(os) apellido(s) valido(s)
         $apellErr = "Solo se permiten letras y espacios en blanco";
         $error=true;
       }
     }
 
-    if (empty($_POST["correouva"])) {
+    if (empty($_POST["correouva"])) { //Comprobamos si se ha rellenado el campo de correo
       $correouvaErr = "El campo de Correo de la UVa es obligatorio";
       $error=true;
     } else {
       $correouva= test_input($_POST["correouva"]);
-      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva)) {
-        $correouvaErr = "Formato de correo invalido";
+      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva)) { //Comprobamos que el correo introducido pertenezca a la uva
+        $correouvaErr = "Formato de correo invalido, debe pertenecer a la uva";
         $error=true;
       }
     }
 
-    if (empty($_POST["passwd"])) {
+    if (empty($_POST["passwd"])) { //Comprobamos si se ha rellenado el campo de contrasena
       $passwdErr = "El campo de Cotrase&ntildea es obligatorio";
       $error=true;
     } else {
       $passwd = test_input($_POST["passwd"]);
       $passwd=remove_accents($passwd);
-      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd)) {
+      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd)) { //Comprobamos que la contrasena introducida siga unos criterios
         $passwdErr= "La contrase&ntildea tiene que tener como	mínimo 8	caracteres cualesquiera y al menos tiene que contener una mayuscula, una minuscula y un numero";
         $error=true;
       }
     }
 
-    if (empty($_POST["reppasswd"])) {
+    if (empty($_POST["reppasswd"])) { //Comprobamos si se ha rellenado el campo de repetir contrasena
       $reppasswdErr = "El campo de Repetir Contrase&ntildea es obligatorio";
       $error=true;
     } else {
       $reppasswd = test_input($_POST["reppasswd"]);
       $reppasswd=remove_accents($reppasswd);
-      if( strlen($passwd ) > 7 ) {
+      if(error==false) { //En caso de que no haya errores comprobamos que las contrasenas coincidan
         if($reppasswd != $passwd) {
           $reppasswdErr= "Las contrase&ntildeas no coinciden";
           $error=true;
@@ -127,18 +127,18 @@
       }
     }
 
-   if (empty($_POST["dni"])) {
+   if (empty($_POST["dni"])) { //Comprobamos si se ha rellenado el campo de dni
       $dniErr = "El campo de DNI o NIE es obligatorio";
       $error=true;
     } else {
       $dni = test_input($_POST["dni"]);
-      if (!(preg_match("/^[0-9]{8}[a-zA-Z]{1}$/",$dni) || preg_match("/^[a-zA-Z]{1}[0-9]{7}[a-zA-Z]{1}$/", $dni))){
+      if (!(preg_match("/^[0-9]{8}[a-zA-Z]{1}$/",$dni) || preg_match("/^[a-zA-Z]{1}[0-9]{7}[a-zA-Z]{1}$/", $dni))){ //Comprobamos que el dni/nie introducido tenga formato de dni o de nie
         $dniErr = "El valor introducido no coincide con el formato de un DNI o NIE";
         $error=true;
       }
     }
 
-    if (empty($_POST["fnacimiento"])) {
+    if (empty($_POST["fnacimiento"])) { //Comprobamos si se ha rellenado el campo de fecha de nacimiento
       $fnacimientoErr = "El campo de Fecha de nacimiento es obligatorio";
       $error=true;
     } else {
@@ -148,62 +148,35 @@
       }*/
     }
 
-    if (empty($_POST["telefono"])) {
+    if (empty($_POST["telefono"])) { //Comprobamos si se ha rellenado el campo de telefono
       $telefonoErr = "El campo de Telefono es obligatorio";
       $error=true;
     } else {
       $telefono = test_input($_POST["telefono"]);
-      if (!preg_match("/^[6-9]{1}[0-9]{8}/",$telefono)) {
+      if (!preg_match("/^[6-9]{1}[0-9]{8}/",$telefono)) { //Comprobamos que el telefono introducido corresponda a un telefono real
         $telefonoErr = "El valor introducido no pertenece a un numero de telefono";
         $error=true;
       }
     }
 
-    /*$opcionSeleccionada = $_POST['curso'];
-    if($opcionSeleccionada==''){
-      $checkboxErr = "Tiene que cursarse al menos una asignatura";
-      $error=true;
-    }*/
-    if (empty($_POST["rol"])) {
+    if (empty($_POST["rol"])) { //Comprobamos si se ha seleccionado Profesor o Alumno
       $rolErr = "Es necesario indicar si se es profesor o alumno";
       $error=true;
     } else {
       $rol = test_input($_POST["rol"]);
     }
 
-    if($error==false && count($_POST)<=8){/*No hay error pero no se han seleccionado asignatura*/
-      $checkboxErr = "Es necesario que seleccione al menos una de las asignaturas";
-      $error=true;
-    }
-
-    if(count($_POST)<10){
+    if(count($_POST)<10){ //Comprobamos que se haya seleccionado al menos una asignatura (considerando que se han rellenado el resto de campos)
       $checkboxErr = "Es necesario estar matriculado en al menos una asignatura";
       $error=true;
     }
-    //print_r($_POST);
-    /*$isOneSelected=false;
-    $checkboxArray = $_POST;
-    echo print_r(checkbox);
 
-      foreach($checkboxArray as $checkbox){
-      if(isset($checkbox)){
-      $isOneSelected = true;
-    }
-  }
-  if($isOneSelected==false){
-  $checkboxErr = "Es necesario que curse al menos una de las asignaturas";
-  }*/
-/*  if	($_POST)	{
-  				echo	'<pre>';
-  				echo	print_r($_POST,	true);
-  				echo	'</pre>';
-  }*/
-    if(!$error){
-      if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){
+      if(!$error){ //Si no hay errores procedemos a introducir los datos introducidos en la base de datos
+      if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){ //Si el correo introducido ya existe en la base de datos mostramos un error
         $userErr = "El email introducido ya existe";
       }
       else {
-        echo '<script>window.location.href = "./sesion.php"</script>';
+        echo '<script>window.location.href = "./sesion.php"</script>'; //Si la creacion de datos es exitosa redireccionamos a la ventana de iniciar sesion
       }
     }
   }
@@ -230,7 +203,7 @@
       exit;
     }
 
-    if(comprobarUsuario($correouva,$db)){
+    if(comprobarUsuario($correouva,$db)){  //si no hay nadie en las base de datos con ese correo procedemos a introducir los datos en las tablas
       $query="INSERT INTO personas VALUES('".$correouva."', '".$nombre."', '".$apell."', '".$dni."', '".$fnacimiento."', '".$passwd."', '".$telefono."', '$rol')";
       $results=mysqli_query($db,$query);
 
@@ -249,7 +222,7 @@
       return true;
     }
 
-    //introducir asignaturas en la tabla de personas-asignautas
+
   }
 
   function comprobarUsuario($correouva,$db){
