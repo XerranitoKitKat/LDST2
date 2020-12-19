@@ -119,7 +119,7 @@
     } else {
       $reppasswd = test_input($_POST["reppasswd"]);
       $reppasswd=remove_accents($reppasswd);
-      if(error==false) { //En caso de que no haya errores comprobamos que las contrasenas coincidan
+      if($error==false) { //En caso de que no haya errores comprobamos que las contrasenas coincidan
         if($reppasswd != $passwd) {
           $reppasswdErr= "Las contrase&ntildeas no coinciden";
           $error=true;
@@ -213,7 +213,7 @@
         $aux=$query."('".$correouva."', '$value')";
         $results=mysqli_query($db,$aux);
       }
-      @mysqli_free_result($results);
+      mysqli_free_result($results);
       mysqli_close($db);
       return false;
     }
