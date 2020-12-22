@@ -73,16 +73,16 @@ $meses=array(1=>"Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio",
 				echo "<td>&nbsp;</td>"; # Mostramos celdas vacias en caso de que el mes no acabe en domingo o no empiece en lunes
 			}else{
 
-				if($day==$GLOBALS["c"]){
+				if($day==$GLOBALS["c"]){ # si el dia es el del primer test se pone en amarillo
 					echo "<td class='primerTest'>$day</td>";
 					}
-				else if($day==$GLOBALS["b"]){
+				else if($day==$GLOBALS["b"]){# si el dia es el del segundo test se pone en rojo
 					echo "<td class='segundoTest'>$day</td>";
 					}
-				else if($day==$GLOBALS["a"]){
+				else if($day==$GLOBALS["a"]){# si el dia es el de desconfinamiento se pone en verde
 					echo "<td class='desconfinamiento'>$day</td>";
 					}
-					else if($day==$diaActual){
+					else if($day==$diaActual){# si el dia es el actual se pone en naranja
 						echo "<td class='actual'>$day</td>";
 						}
 				else{
