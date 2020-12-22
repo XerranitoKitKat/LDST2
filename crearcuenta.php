@@ -27,22 +27,24 @@
     text-align: center;
   }
 
-  .elem {
-    margin-left: 20px;
-    margin-top: 2.5px;
-    margin-bottom:2.5px;
-  }
   input {
   padding:2px;
   font-size: 14px;
   font-family: sans-serif;
   border: 1px solid #aaaaaa;
-}
+  }
+
   select {
     margin-top:10px;
     margin-bottom:10px;
     font-size: 14px;
     font-family: sans-serif;
+  }
+
+  .elem {
+    margin-left: 20px;
+    margin-top: 2.5px;
+    margin-bottom:2.5px;
   }
 
  .error {
