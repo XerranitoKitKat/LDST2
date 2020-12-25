@@ -174,11 +174,12 @@
     }
 
       if(!$error){ //Si no hay errores procedemos a introducir los datos introducidos en la base de datos
+        print_r($_POST);
       if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){ //Si el correo introducido ya existe en la base de datos mostramos un error
         $userErr = "El email introducido ya existe";
       }
       else {
-        echo '<script>window.location.href = "./sesion.php"</script>'; //Si la creacion de datos es exitosa redireccionamos a la ventana de iniciar sesion
+        //echo '<script>window.location.href = "./sesion.php"</script>'; //Si la creacion de datos es exitosa redireccionamos a la ventana de iniciar sesion
       }
     }
   }
@@ -214,8 +215,12 @@
       foreach($asignaturas as $value){
         $aux=$query."('".$correouva."', '$value')";
         $results=mysqli_query($db,$aux);
+        if($_POST["rol"]==2){ //si es alumno, incrementar el numero de n_matriculados
+          $query	=	"UPDATE	asignaturas SET n_matriculados=n_matriculados+1 WHERE codigo = $value";
+          $result=mysqli_query($db,$query);
+        }
       }
-      mysqli_free_result($results);
+      print_r($result);
       mysqli_close($db);
       return false;
     }
