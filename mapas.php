@@ -49,7 +49,7 @@
     .contenedor-Buscador{
       min-height: 50px;
       margin: auto;
-      font: large Verdana;
+      font: x-small Verdana;
       padding: 0 30% 0 30%;
     }
 
@@ -77,6 +77,10 @@
       margin: auto;
       width: 100%;
       height: 100%;
+    }
+
+    #orden{
+      min-width: 100px;
     }
 
     @media all and (max-width:640px){
@@ -182,6 +186,16 @@
         <td><input type="text" name="busq" value="<?php echo isset($_GET['busq']) ? $_GET['busq'] : ''; ?>" placeholder="Introduce una asignatura o aula a buscar" /></td>
         <!-- la funcion PHP isset determina si la variable introducida no es nula, devuelve un boleano que usamos para decidir que escribir en la linea -->
         <td><input type="submit" value="Buscar" /></td>
+        <td>
+          <span>
+            Ordenar por orden:
+            <select id="orden" name="selOrden">
+              <option value="alf">Alfabetico</option>
+              <option value="curso">Curso</option>
+              <option value="nmat">Nº de matriculados</option>
+            </select>
+          </span>
+        </td>
       </tr>
     </table>
   </form>
@@ -223,6 +237,19 @@
       }
 
       $sql_busq=substr($sql_busq,0,strlen($sql_busq)-4); /*Eliminados el ultimo OR de la cadena de busqueda para evitar errores*/
+      //print_r($_GET['selOrden']);
+      if($_GET['selOrden']==="alf"){
+        $sql_busq.=" ORDER BY nombre ASC";
+        echo '<div><u>Mostrandose resultados en orden alfabetico</u></div><div>INFO</div>';
+      }
+      elseif($_GET['selOrden']==="curso") {
+        $sql_busq.="ORDER BY curso ASC";
+        echo '<div><u>Mostrandose resultados por cursos (mas bajos primero)</u></div><div>INFO</div>';
+      }
+      elseif($_GET['selOrden']==="nmat"){
+        $sql_busq.="ORDER BY n_matriculados DESC";
+        echo '<div><u>Mostrandose resultados por numero de matriculados (mas matriculados primero)</u></div><div>INFO</div>';
+      }
 
       $db=mysqli_connect('localhost','root','','bd');
 
@@ -281,7 +308,9 @@
         $queryAsig=$queryAsig."codigo=".$fila['codigo']." OR ";
       }
       $queryAsig=substr($queryAsig,0,strlen($queryAsig)-4);
+      $queryAsig=$queryAsig." ORDER BY nombre ASC";
       $resulAsig=mysqli_query($db,$queryAsig);
+
 
       for ($i=0; $i < mysqli_num_rows($resulAsig) ; $i++) {
         $fila=mysqli_fetch_array($resulAsig);
