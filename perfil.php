@@ -294,10 +294,6 @@
             }
             $c = 0; # Reestablecemos el valor del comprobodar a cero
           }
-<<<<<<< HEAD
-=======
-          $c = 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
->>>>>>> 4c92b4fab97a535729ed16020be53bb0eebe6979
         }
       }
 
