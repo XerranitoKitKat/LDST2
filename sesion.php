@@ -59,12 +59,11 @@
           $sesErr="Contraseña u correo erroneos";
         }
       }
-      unset($_POST);
       mysqli_free_result($resultado);
     }
   ?>
 
-<div class="formulario">
+<div class="formulario" method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
   <form method="post" enctype="multipart/form-data" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
     <label for="user">Correo electrónico:</label><br>
     <input type="text" id="user" name="user" value=""><br>

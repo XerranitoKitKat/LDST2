@@ -179,7 +179,7 @@
         $userErr = "El email introducido ya existe";
       }
       else {
-        //echo '<script>window.location.href = "./sesion.php"</script>'; //Si la creacion de datos es exitosa redireccionamos a la ventana de iniciar sesion
+        echo '<script>window.location.href = "./sesion.php"</script>'; //Si la creacion de datos es exitosa redireccionamos a la ventana de iniciar sesion
       }
     }
   }
@@ -208,19 +208,19 @@
 
     if(comprobarUsuario($correouva,$db)){  //si no hay nadie en las base de datos con ese correo procedemos a introducir los datos en las tablas
       $query="INSERT INTO personas VALUES('".$correouva."', '".$nombre."', '".$apell."', '".$dni."', '".$fnacimiento."', '".$passwd."', '".$telefono."', '$rol')";
-      $results=mysqli_query($db,$query);
+      $result=mysqli_query($db,$query);
 
       $query="INSERT INTO per_asig VALUES";
 
       foreach($asignaturas as $value){
-        $aux=$query."('".$correouva."', '$value')";
-        $results=mysqli_query($db,$aux);
+        $aux=$query."('".$correouva."', ".$value.")";
+        print_r($aux);
+        $result=mysqli_query($db,$aux);
         if($_POST["rol"]==2){ //si es alumno, incrementar el numero de n_matriculados
-          $query	=	"UPDATE	asignaturas SET n_matriculados=n_matriculados+1 WHERE codigo = $value";
-          $result=mysqli_query($db,$query);
+          $query2	=	"UPDATE	asignaturas SET n_matriculados=n_matriculados+1 WHERE codigo = ".$value;
+          $result=mysqli_query($db,$query2);
         }
       }
-      print_r($result);
       mysqli_close($db);
       return false;
     }

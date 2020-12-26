@@ -97,6 +97,57 @@
 <body>
   <?php
   include 'cabecera.php';
+
+  function mostrarBusqueda($aulas,$naulas,$labs,$URL_labs,$URL_aulas,$nURL_aulas){ //esta funcion se encarga de la disposicion de las aulas
+    if(count($naulas)==1 && count($nURL_aulas)==1){ /*numero de URLs y aulas coinciden*/
+      echo '<div>AULA '.$aulas.'</div>
+      <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
+    }
+    elseif (count($naulas)==2 && count($nURL_aulas)==1) {/*varias aulas en un solo URL*/
+      echo '<div>AULA '.$naulas[0].'</div>
+      <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>
+      <div>AULA '.$naulas[1].'</div>
+      <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
+    }
+    elseif (count($naulas)==2 && count($nURL_aulas)==2) {/*dos aulas en dos URLs*/
+      echo '<div>AULA '.$naulas[0].'</div>
+      <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+      <div>AULA '.$naulas[1].'</div>
+      <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
+    }
+    elseif (count($naulas)==3 && count($nURL_aulas)==2) {/*tres aulas en dos URLs*/
+      echo '<div>AULA '.$naulas[0].'</div>
+      <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+      <div>AULA '.$naulas[1].'</div>
+      <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
+      <div>AULA '.$naulas[2].'</div>
+      <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
+    }
+    /*no se da el caso de que tengamos 3 URL, tampoco el que tengamos mas de dos ficheros de lab*/
+    if(strcmp($URL_labs,"ND")==0){
+      '<div>LABORATORIO '.$labs.' Inf. No Disponible</div>
+      <div>'.$URL_labs.'</div>';
+    }
+    elseif($labs!=NULL) {
+      echo '<div>LABORATORIO(S) '.$labs.'</div>
+      <div><a href="'.$URL_labs.'" target="_blanck">PDF</a></div>';
+    }
+
+    if(preg_match("/A0/",$aulas)){
+      echo '<div>PLANO DE LA PLANTA BAJA</div>
+      <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>';
+    }
+
+    if(preg_match("/A1/",$aulas) || preg_match("/1L/",$labs) || (strcmp("LABORATORIO DE ELECTRONICA",$labs)==0)){
+      echo '<div>PLANO DE PRIMERA PLANTA</div>
+      <div><a href="./pdfs/PRIMERA_PLANTA.pdf" target="_blanck">PDF</a></div>';
+    }
+
+    if(preg_match("/2L/",$labs)){
+      echo '<div>PLANO DE LA SEGUNDA PLANTA</div>
+      <div><a href="./pdfs/SEGUNDA_PLANTA.pdf" target="_blanck">PDF</a></div>';
+    }
+  }
   ?>
   <div class="contenedor-Texto"><h4>El edificio consta de 3 plantas y alberga a las escuelas de ingenieros de informática y telecomunicaciones tal como se muestra a continuación:</h4></div>
 
@@ -197,59 +248,59 @@
         $naulas=explode(' ',$aulas);
         $nURL_aulas=explode(' ',$URL_aulas);
 
-        echo '<div><u>Resultados para '.$fila['nombre'].'</u></div><div>INFO</div>';
+        echo '<div><u>Resultados para <b>'.strtoupper($fila['nombre']).'</b></u></div><div>INFO</div>';
 
-        if(count($naulas)==1 && count($nURL_aulas)==1){ /*numero de URLs y aulas coinciden*/
-          echo '<div>AULA '.$aulas.'</div>
-          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
-        }
-        elseif (count($naulas)==2 && count($nURL_aulas)==1) {/*varias aulas en un solo URL*/
-          echo '<div>AULA '.$naulas[0].'</div>
-          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>
-          <div>AULA '.$naulas[1].'</div>
-          <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
-        }
-        elseif (count($naulas)==2 && count($nURL_aulas)==2) {/*dos aulas en dos URLs*/
-          echo '<div>AULA '.$naulas[0].'</div>
-          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
-          <div>AULA '.$naulas[1].'</div>
-          <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
-        }
-        elseif (count($naulas)==3 && count($nURL_aulas)==2) {/*tres aulas en dos URLs*/
-          echo '<div>AULA '.$naulas[0].'</div>
-          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
-          <div>AULA '.$naulas[1].'</div>
-          <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
-          <div>AULA '.$naulas[2].'</div>
-          <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
-        }
-        /*no se da el caso de que tengamos 3 URL, tampoco el que tengamos mas de dos ficheros de lab*/
-        if(strcmp($URL_labs,"ND")==0){
-          '<div>LABORATORIO '.$labs.' Inf. No Disponible</div>
-          <div>'.$URL_labs.'</div>';
-        }
-        elseif($labs!=NULL) {
-          echo '<div>LABORATORIO(S) '.$labs.'</div>
-          <div><a href="'.$URL_labs.'" target="_blanck">PDF</a></div>';
-        }
-
-        if(preg_match("/A0/",$aulas)){
-          echo '<div>PLANO DE LA PLANTA BAJA</div>
-          <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>';
-        }
-
-        if(preg_match("/A1/",$aulas) || preg_match("/1L/",$labs) || (strcmp("LABORATORIO DE ELECTRONICA",$labs)==0)){
-          echo '<div>PLANO DE PRIMERA PLANTA</div>
-          <div><a href="./pdfs/PRIMERA_PLANTA.pdf" target="_blanck">PDF</a></div>';
-        }
-
-        if(preg_match("/2L/",$labs)){
-          echo '<div>PLANO DE LA SEGUNDA PLANTA</div>
-          <div><a href="./pdfs/SEGUNDA_PLANTA.pdf" target="_blanck">PDF</a></div>';
-        }
+        mostrarBusqueda($aulas,$naulas,$labs,$URL_labs,$URL_aulas,$nURL_aulas);
       }
 
       mysqli_free_result($resultado);
+      mysqli_close($db);
+    }
+    elseif (isset($_SESSION["user"])) {
+      $db=mysqli_connect('localhost','root','','bd');
+
+      if(!$db){
+        echo "Error: No se pudo conectar a la base de datos.<br>";
+        exit;
+      }
+
+      $email=$_SESSION["user"];
+
+      $queryNombre="SELECT nombre FROM personas WHERE email LIKE '".$email."'";
+      $resulNombre=mysqli_query($db,$queryNombre);
+      $fila=mysqli_fetch_array($resulNombre);
+      echo "<div><u>Bienvenido ".$fila['nombre'].", he aqui una lista con informacion de tus asignaturas</u></div><div>INFO</div>";
+
+      $query="SELECT codigo FROM per_asig WHERE email LIKE '".$email."'";
+      $resultados=mysqli_query($db,$query);
+
+      $queryAsig="SELECT nombre,aula,lab,img_a,img_l FROM asignaturas WHERE ";
+
+      for($i=0; $i<mysqli_num_rows($resultados); $i++){
+        $fila=mysqli_fetch_array($resultados);
+        $queryAsig=$queryAsig."codigo=".$fila['codigo']." OR ";
+      }
+      $queryAsig=substr($queryAsig,0,strlen($queryAsig)-4);
+      $resulAsig=mysqli_query($db,$queryAsig);
+
+      for ($i=0; $i < mysqli_num_rows($resulAsig) ; $i++) {
+        $fila=mysqli_fetch_array($resulAsig);
+
+        $aulas=$fila['aula'];
+        $labs=$fila['lab'];
+        $URL_aulas=$fila['img_a'];
+        $URL_labs=$fila['img_l'];
+
+        $naulas=explode(' ',$aulas);
+        $nURL_aulas=explode(' ',$URL_aulas);
+
+        echo '<div><b><u>'.strtoupper($fila['nombre']).'</u></b></div><div>INFO</div>';
+
+        mostrarBusqueda($aulas,$naulas,$labs,$URL_labs,$URL_aulas,$nURL_aulas);
+      }
+      mysqli_free_result($resultados);
+      mysqli_free_result($resulAsig);
+      mysqli_free_result($resulNombre);
       mysqli_close($db);
     }
     else {
