@@ -288,7 +288,7 @@
               $positivos++; # aumento el caso de positivos si y solo si es el la primera entrada que cumple la condicion
             } # de estar en la misma clase y se positivo o si es la primera vez que compruebo a la misma persona (se hace variasa veces)
           }
-          $c == 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
+          $c = 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
         }
       }
     }
