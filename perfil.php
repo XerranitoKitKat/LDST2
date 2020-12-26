@@ -231,7 +231,8 @@
             $c++;
           }
         }
-      }else if($c == 0){ # en caso de que no haya sido añadida se hace lo siguiente
+      }
+      if($c == 0){ # en caso de que no haya sido añadida se hace lo siguiente
         if($fila2['email']!=$_SESSION["user"]){ # se comprueba que las peronas de la tabla no sean la persona, para no contar a esta como positivo (pues ya lo sabe y queremos indicar positivos de compañeros)
           $fecha_actual = getdate(time()); # obtenemos las fechas relevantes
           $fecha_actual_day = $fecha_actual['mday'];
@@ -239,7 +240,7 @@
           $fecha_actual_year = $fecha_actual['year'];
           $desconf = explode("-",$fila2['f_descon']);
           # se comprueba que la entrada de la persona este confinada actualmente
-          if(($desconf[0] < $fecha_actual_year)||(($desconf[1] < $fecha_actual_mon)&&($desconf[0] == $fecha_actual_year))||(($desconf[2] < $fecha_actual_day)&&($desconf[0] == $fecha_actual_year)&&($desconf[1] == $fecha_actual_mon))){
+          if(($desconf[0] > $fecha_actual_year)||(($desconf[1] > $fecha_actual_mon)&&($desconf[0] == $fecha_actual_year))||(($desconf[2] > $fecha_actual_day)&&($desconf[0] == $fecha_actual_year)&&($desconf[1] == $fecha_actual_mon))){
             $arrayemail[$cont_email] = $fila2['email']; # Si estaconfinada se introduce en un array
             $cont_email++; # se cuenta la cantidad de personas que hay confinadas actualmente
           }
@@ -256,28 +257,34 @@
       echo	"Error:	No hay ningun elemento en la tabla	<br>";
       exit();
     }
-
     $positivos = 0; # definimos variables que serviran para ver el numero de positivoss que hay en algunade nuestras asignaturas
     $c = 0; # La usamos para lo mismo que antes, parta no mostrar/contar a la misma persona mas de una vez
     for ($i = 0; $i < mysqli_num_rows($resultado);$i++){ #primer for para recorrer toda la tabla
       $fila2 = mysqli_fetch_array($resultado);
       for($j = 0; $j < $cont_email;$j++){ # Segundo for para recorrer todo el vector de emails que son positivos
         for ($k=0; $k < $contador; $k++) { # Tercer for para ver si alguno de los positivos coincide en nuestras asignaturas
-          if(($fila2['email'] == $arrayemail[$j])&&($arrayPos[$k] == $fila2['codigo'])){
-            $arraycomp[$positivos] = $fila2['email']; # Lo utilizp para comprobar que la misma persona no afecta varias veces
-            if($positivos != 0){
-              for ($x=0; $x < $positivos; $x++) {
-                if($arraycomp[$j] == $fila2['email']){ # si al persona ya esta en el array, no se vuelve a meter
-                  $c++;
+          if(($fila2['email'] == $arrayemail[$j])&&($arrayPos[$k] == $fila2['codigo'])){ # Comrpueba que el alumno que se coja este confinado y tenga la misma asignatura que la persona
+            if($positivos != 0){ # Cuando ya nosea la primera iteracion
+              for($x=0; $x < $positivos; $x++){ # Para todos el array ya exitente vemos hemos introducido ya el email de la persona en el array, ya que la persona en cuestion puede compartir mas de una
+                if($arraycomp[$x] == $fila2['email']){ # asignatura con un positivos, es decir, comprobamos el no cogerle dos veces
+                  $c++; # actualizamos el comprobante para no introducir a la persona de nuevo en el array
                 }
               }
-            }else if(($positivos == 0)||($c == 0)){
-              $positivos++; # aumento el caso de positivos si y solo si es el la primera entrada que cumple la condicion
-            } # de estar en la misma clase y se positivo o si es la primera vez que compruebo a la misma persona (se hace variasa veces)
+              if($c == 0){ # si el comprobante es nulo, quiere decir que es la primera entradaque tenemos de le persona de la base de datos confinada
+                $arraycomp[$positivos] = $fila2['email']; # por lo que la añadimos al array
+                $positivos++; # y actualizamos el contador 
+              }
+
+            }else{ # para la primera iteracion se mete el email en la variable. Este array no se mostraria por politicas de privacidad de los alumnos
+              $arraycomp[$positivos] = $fila2['email'];
+              $positivos++; #actualizamos el contador de positivos
+            }
+            $c = 0; # Reestablecemos el valor del comprobodar a cero
           }
-          $c == 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
         }
       }
+
+      $c = 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
     }
     unset($fila2);
     mysqli_free_result($resultado);
