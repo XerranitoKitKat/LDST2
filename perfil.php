@@ -135,8 +135,6 @@
       # En es elguiente if se comprueba que la fecha actual sea despues que la del ultimo confinamiento que haya tenido la persona para que asi pueda añadir un comentario de la experiencia obtenida al ultimo confinamiento
       # es decir, que ponga valoracion o lo que quiera introducir. Esto ocurre siuempre y cuando no se haya introducido ya el comentario
 
-      #ERES UN PSICOPATA, pero se te quiere igual amorcito. Pd: no has usado un puto foreach,tus ifs los has debido de hacer mientras te marcarbas un temon satanico, la profe se va a cagar en tus muertos, a mi personalmente me hace gracia. Att con amor, Jenny.
-
       if(($fila2 == NULL)||($desconf[0] < $fecha_actual_year)||(($desconf[1] < $fecha_actual_mon)&&($desconf[0] == $fecha_actual_year))||(($desconf[2] < $fecha_actual_day)&&($desconf[0] == $fecha_actual_year)&&($desconf[1] == $fecha_actual_mon))){ #Esto indica que no esta confinado, o que no ha estado confinado en ningun momento
         if(($fila2 != NULL)&&($fila2['comentario']==NULL)){
           echo '<form method = "post"><label for="comentario">Comente su experiencia la experiencia del ultimo confinamiento </label><br><input type="text" id="comentario" name="comentario" style="width : 100px; heigth : 100px"><br><input type = "submit" value="Enviar Comentario"></form>';
@@ -158,9 +156,6 @@
             $user = "user";
             $query	=	"INSERT INTO test(email, f_test1, f_test2, f_descon) VALUES ('".$_SESSION[$user]."','".$pcr1."','".$pcr2."','".$des."')";
             $resultado	=	mysqli_query($bd,	$query); # Introducimos una nueva entrada a la tabla de test de la persona
-            echo '<script>window.location.href = "./sesion.php"</script>';#NO funciona, mecago en todo
-            #Voy a comentar el problema, creo que las variables guardan su estado en el fichero, creo que pasa algo muy raro con los if o con alguna variable que anda por ahi purulando
-            #me puedo estar equivocando tho, pero me huele a eso. Importa el orden en el que pongas el codigo php (mira sesion.php), sinceramente esto es una locura.
             unset($_POST);
             unset($_SERVER);
           }
@@ -170,8 +165,6 @@
           echo 'No se ha indicado positivo todavia';
         }
       }
-      #el problema es que cuando das a enviar, todo el codigo dentro de este else se lo salta porque ya ha evaluado el if de la linea 140
-      #UNA SOLUCION: recargar pagina (linea 161)
       else{ # Por el contrario si esta confinado actualmente, es decir, si la fecha de desconfinamiento es mayor que la actual se le muestra un calendario
         $desconf = explode("-",$fila2['f_descon']);
         $segundaPCR = explode("-",$fila2['f_test2']);
@@ -285,7 +278,7 @@
               }
               if($c == 0){ # si el comprobante es nulo, quiere decir que es la primera entradaque tenemos de le persona de la base de datos confinada
                 $arraycomp[$positivos] = $fila2['email']; # por lo que la añadimos al array
-                $positivos++; # y actualizamos el contador 
+                $positivos++; # y actualizamos el contador
               }
 
             }else{ # para la primera iteracion se mete el email en la variable. Este array no se mostraria por politicas de privacidad de los alumnos

@@ -1,5 +1,5 @@
 <?php
-/*Funcion obtenida de StackOverflow URL: https://stackoverflow.com/questions/1017599/how-do-i-remove-accents-from-characters-in-a-php-string*/
+//Funcion obtenida de StackOverflow URL: https://stackoverflow.com/questions/1017599/how-do-i-remove-accents-from-characters-in-a-php-string
 function remove_accents($string) {
   if ( !preg_match('/[\x80-\xff]/', $string) )
         return $string;

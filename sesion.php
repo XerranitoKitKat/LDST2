@@ -38,16 +38,19 @@
     if ($_SERVER["REQUEST_METHOD"] == "POST"){
       $bd	=	mysqli_connect("localhost",	"root",	"");
       mysqli_select_db($bd,	"bd");
+
       if	(mysqli_connect_errno())	{
-          echo	"Error:	"	.	mysqli_connect_error()	.	".	<br>";
+          echo	"Error:	".mysqli_connect_error()."<br>";
           exit();
       }
+
       $query	=	"SELECT * FROM	personas";
       $resultado	=	mysqli_query($bd,	$query);
       if(!$resultado){
         echo "No hay usuarios en base de datos";
         exit();
       }
+
       for ($i = 0; $i < mysqli_num_rows($resultado);$i++){
         $fila2 = mysqli_fetch_array($resultado);
         if (($fila2['email'] === $_POST["user"])&&($fila2['passwd'] === $_POST["passwd"])){ #aqui comprobaremos que se escoge a la persona correcta a mostrar
@@ -55,7 +58,7 @@
           $_SESSION["user"] = $_POST["user"];
           header('Location: perfil.php');
         }
-        else {
+        else {//no hay usuario con credenciales coincidentes
           $sesErr="Contraseña u correo erroneos";
         }
       }

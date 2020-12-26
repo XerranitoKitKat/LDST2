@@ -74,8 +74,8 @@
     } else {
       $nombre = test_input($_POST["nombre"]);
       $nombre=remove_accents($nombre);
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre)) {  //Aseguramos que se haya introducido un nombre valido
-        $nombreErr = "Solo se permiten letras y espacios en blanco";
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre) && strlen($nombre)>50) {  //Aseguramos que se haya introducido un nombre valido
+        $nombreErr = "Solo se permiten letras y espacios en blanco. Maximo 50 caracteres";
         $error=true;
       }
     }
@@ -86,8 +86,8 @@
     } else {
       $apell = test_input($_POST["apell"]);
       $apell=remove_accents($apell); //quitamos acentos o eñes para que no haya problemas en la base de datos
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell)) { //Aseguramos que se haya introducido un(os) apellido(s) valido(s)
-        $apellErr = "Solo se permiten letras y espacios en blanco";
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell) && strlen($apellido)>100) { //Aseguramos que se haya introducido un(os) apellido(s) valido(s)
+        $apellErr = "Solo se permiten letras y espacios en blanco. Maximo 100 caracteres";
         $error=true;
       }
     }
@@ -97,7 +97,7 @@
       $error=true;
     } else {
       $correouva= test_input($_POST["correouva"]);
-      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva)) { //Comprobamos que el correo introducido pertenezca a la uva
+      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva) && strlen($correouva)>100) { //Comprobamos que el correo introducido pertenezca a la uva
         $correouvaErr = "Formato de correo invalido, debe pertenecer a la uva";
         $error=true;
       }
@@ -109,7 +109,7 @@
     } else {
       $passwd = test_input($_POST["passwd"]);
       $passwd=remove_accents($passwd);
-      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd)) { //Comprobamos que la contrasena introducida siga unos criterios
+      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd) && strlen($correouva)>50) { //Comprobamos que la contrasena introducida siga unos criterios
         $passwdErr= "La contrase&ntildea tiene que tener como	mínimo 8	caracteres cualesquiera y al menos tiene que contener una mayuscula, una minuscula y un numero";
         $error=true;
       }
@@ -145,9 +145,6 @@
       $error=true;
     } else {
       $fnacimiento = test_input($_POST["fnacimiento"]);
-      /*  if (!preg_match("/([0-9]{4})\/([0-9]{2})\/([0-9]{2})/i",$fnacimiento)) {
-      $fnacimientoErr = "El formato introducido no es el correcto (YYYY-MM-DD)";
-      }*/
     }
 
     if (empty($_POST["telefono"])) { //Comprobamos si se ha rellenado el campo de telefono
@@ -184,14 +181,14 @@
     }
   }
 
-  function test_input($data) {
+  function test_input($data) { //esta funcion se encarga de procesar los datos de entrada para meterlos en la base de datos
     $data = trim($data);
     $data = stripslashes($data);
     $data = htmlspecialchars($data);
     return $data;
   }
 
-  function crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$asignaturas){
+  function crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$asignaturas){ //funcion para creacion de usuario
     $nombre	=	addslashes($nombre);
     $apell	=	addslashes($apell);
     $correouva	=	addslashes($correouva);
@@ -206,7 +203,7 @@
       exit;
     }
 
-    if(comprobarUsuario($correouva,$db)){  //si no hay nadie en las base de datos con ese correo procedemos a introducir los datos en las tablas
+    if(comprobarUsuario($correouva,$db)){  //si no hay nadie en las base de datos con ese correo (clave primaria) procedemos a introducir los datos en las tablas
       $query="INSERT INTO personas VALUES('".$correouva."', '".$nombre."', '".$apell."', '".$dni."', '".$fnacimiento."', '".$passwd."', '".$telefono."', '$rol')";
       $result=mysqli_query($db,$query);
 
@@ -214,7 +211,6 @@
 
       foreach($asignaturas as $value){
         $aux=$query."('".$correouva."', ".$value.")";
-        print_r($aux);
         $result=mysqli_query($db,$aux);
         if($_POST["rol"]==2){ //si es alumno, incrementar el numero de n_matriculados
           $query2	=	"UPDATE	asignaturas SET n_matriculados=n_matriculados+1 WHERE codigo = ".$value;
@@ -299,7 +295,7 @@
       <span class="error"> <?php echo $rolErr;?></span>
     </div><br>
     <div class="elem" id="contenedor_asig">
-    <?php
+    <?php //logica para mostrar las asignaturas a matricular a partir de la base de datos
        $db=mysqli_connect('localhost','root','','bd');
        if(!$db){
           echo "Error: No se pudo conectar a la base de datos.<br>";

@@ -103,23 +103,23 @@
   include 'cabecera.php';
 
   function mostrarBusqueda($aulas,$naulas,$labs,$URL_labs,$URL_aulas,$nURL_aulas){ //esta funcion se encarga de mostrar de forma bonita el resultado de la busqueda
-    if(count($naulas)==1 && count($nURL_aulas)==1){ /*numero de URLs y aulas coinciden*/
+    if(count($naulas)==1 && count($nURL_aulas)==1){ //numero de URLs y aulas coinciden
       echo '<div>AULA '.$aulas.'</div>
       <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
     }
-    elseif (count($naulas)==2 && count($nURL_aulas)==1) {/*varias aulas en un solo URL*/
+    elseif (count($naulas)==2 && count($nURL_aulas)==1) {//varias aulas en un solo URL
       echo '<div>AULA '.$naulas[0].'</div>
       <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>
       <div>AULA '.$naulas[1].'</div>
       <div><a href="'.$URL_aulas.'" target="_blanck">PDF</a></div>';
     }
-    elseif (count($naulas)==2 && count($nURL_aulas)==2) {/*dos aulas en dos URLs*/
+    elseif (count($naulas)==2 && count($nURL_aulas)==2) {//dos aulas en dos URLs
       echo '<div>AULA '.$naulas[0].'</div>
       <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
       <div>AULA '.$naulas[1].'</div>
       <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
     }
-    elseif (count($naulas)==3 && count($nURL_aulas)==2) {/*tres aulas en dos URLs*/
+    elseif (count($naulas)==3 && count($nURL_aulas)==2) {//tres aulas en dos URLs
       echo '<div>AULA '.$naulas[0].'</div>
       <div><a href="'.$nURL_aulas[0].'" target="_blanck">PDF</a></div>
       <div>AULA '.$naulas[1].'</div>
@@ -127,7 +127,7 @@
       <div>AULA '.$naulas[2].'</div>
       <div><a href="'.$nURL_aulas[1].'" target="_blanck">PDF</a></div>';
     }
-    /*no se da el caso de que tengamos 3 URL, tampoco el que tengamos mas de dos ficheros de lab*/
+    //no se da el caso de que tengamos 3 URL, tampoco el que tengamos mas de dos ficheros de lab
     if(strcmp($URL_labs,"ND")==0){
       '<div>LABORATORIO '.$labs.' Inf. No Disponible</div>
       <div>'.$URL_labs.'</div>';
@@ -137,6 +137,7 @@
       <div><a href="'.$URL_labs.'" target="_blanck">PDF</a></div>';
     }
 
+    //los siguientes if son para mostrar el plano de la planta correspondientes a las aulas donde se imparte la asignatura
     if(preg_match("/A0/",$aulas)){
       echo '<div>PLANO DE LA PLANTA BAJA</div>
       <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>';
@@ -205,9 +206,9 @@
     include 'funcion_acentos.php';
 
     if(isset($_GET['busq'])){//se esta haciendo una busqueda
-      $busq=isset($_GET['busq']) ? $_GET['busq'] : ''; /*Cadena vacia si no se ha introducido algo*/
+      $busq=isset($_GET['busq']) ? $_GET['busq'] : ''; //Cadena vacia si no se ha introducido algo
 
-      if (strlen($busq)==0) {/*Verificamos que se haya introducido algo*/
+      if (strlen($busq)==0) {//Verificamos que se haya introducido algo a buscar
         exit;
       }
 
@@ -215,29 +216,20 @@
       $busq=htmlspecialchars($busq);
       $busq=remove_accents($busq);
 
-      /*Por como almecenamos los PDFs estos ifs son necesarios para la coincidencia de aulas
-      if(preg_match("/^([1-2]?[AL]$/"))
-      if(preg_match("/^(2L00([1-3]|[9-10]))$/",$palabra)){
-        $palabra="2L001-2-3-9-10.pdf"
-      }
-      */
-
       $palabras_clave=explode('-',$busq);
       $sql_busq="SELECT nombre,aula,lab,img_a,img_l FROM asignaturas WHERE ";//preparamos nuestra peticion
 
       foreach ($palabras_clave as $palabra) {
-        /*Asegurar que todas son minusculas*/
+        //Asegurar que todas son minusculas
         $palabra=strtolower($palabra);
-        /*Hacer primer caracter mayusculas*/
+        //Hacer primer caracter mayusculas
         $palabra=ucfirst($palabra);
 
         $sql_busq.="nombre LIKE '%".$palabra."%' OR ";//concatenamos con las palabras clave que busquemos
-          /*"aula LIKE '%".$palabra."%' OR ".
-          "lab LIKE '%".$palabra."%' OR ".*/
       }
 
-      $sql_busq=substr($sql_busq,0,strlen($sql_busq)-4); /*Eliminados el ultimo OR de la cadena de busqueda para evitar errores*/
-      //print_r($_GET['selOrden']);
+      $sql_busq=substr($sql_busq,0,strlen($sql_busq)-4); //Eliminados el ultimo OR de la cadena de busqueda para evitar errores
+
       if($_GET['selOrden']==="alf"){//queremos ordenar por orden alfabetico
         $sql_busq.=" ORDER BY nombre ASC";
         echo '<div><u>Mostrandose resultados en orden alfabetico</u></div><div>INFO</div>';
@@ -283,7 +275,7 @@
       mysqli_free_result($resultado);
       mysqli_close($db);
     }
-    elseif (isset($_SESSION["user"])) {//visualizacion por un usuario logeado
+    elseif (isset($_SESSION["user"])) {//visualizacion de asignaturas por un usuario logeado, se muestra a las que esta matriculado
       $db=mysqli_connect('localhost','root','','bd');
 
       if(!$db){
@@ -293,8 +285,7 @@
 
       $email=$_SESSION["user"];
 
-      $queryNombre="SELECT nombre FROM personas WHERE email LIKE '".$email."'";//Busco el nombre a partir del email PORQUE A ALGUIEN NO SE LE OCURRIO GUARDAR EL NOMBRE Y LAS ASIGNATURAS MATRICULADAS EN LA VARIABLE DE SESION Y YA ES MUY TARDE PARA CAMBIARLO. Fuck.
-      $resulNombre=mysqli_query($db,$queryNombre);
+      $queryNombre="SELECT nombre FROM personas WHERE email LIKE '".$email."'";//Busco el nombre a partir del email
       $fila=mysqli_fetch_array($resulNombre);
       echo "<div><u>Bienvenido ".$fila['nombre'].", he aqui una lista con informacion de tus asignaturas</u></div><div>INFO</div>";
 
@@ -308,7 +299,7 @@
         $queryAsig=$queryAsig."codigo=".$fila['codigo']." OR ";//concateno para buscar
       }
       $queryAsig=substr($queryAsig,0,strlen($queryAsig)-4);
-      $queryAsig=$queryAsig." ORDER BY nombre ASC";//concateno para ordenar
+      $queryAsig=$queryAsig." ORDER BY nombre ASC";//concateno para ordenar en orden alfabetico
       $resulAsig=mysqli_query($db,$queryAsig);
 
 
@@ -333,7 +324,7 @@
       mysqli_close($db);
     }
     else {
-      //inicialmente se muestran todas las aulas y pisos de la escuela, aunque en la tabla de asignaturas solo disponemos de los planos de teleco general.
+      //inicialmente se muestran todas las aulas y pisos de la escuela, aunque en la tabla de asignaturas solo disponemos de los planos de teleco general. De ahi la necesidad de hacer un echo directamente
       echo '<div>PLANO DE PLANTA BAJA</div>
       <div><a href="./pdfs/PLANTA_BAJA.pdf" target="_blanck">PDF</a></div>
       <div>PLANO DE LA PRIMERA PLANTA</div>

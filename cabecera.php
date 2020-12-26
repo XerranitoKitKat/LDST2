@@ -1,9 +1,9 @@
 <?php
 session_start();
 if(isset($_SESSION["user"])){
-  $user = "Perfil";
+  $user = "Perfil";//uno de los botones tiene que ir a perfil
 }else{
-  $user = "Inicio de Sesion / Registro";
+  $user = "Inicio de Sesion / Registro";//otro lleva al inicio de sesion
 }
 echo '<script src=./scripts/navegacion.js>
 </script>
