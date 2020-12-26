@@ -134,6 +134,9 @@
 
       # En es elguiente if se comprueba que la fecha actual sea despues que la del ultimo confinamiento que haya tenido la persona para que asi pueda añadir un comentario de la experiencia obtenida al ultimo confinamiento
       # es decir, que ponga valoracion o lo que quiera introducir. Esto ocurre siuempre y cuando no se haya introducido ya el comentario
+
+      #ERES UN PSICOPATA, pero se te quiere igual amorcito. Pd: no has usado un puto foreach,tus ifs los has debido de hacer mientras te marcarbas un temon satanico, la profe se va a cagar en tus muertos, a mi personalmente me hace gracia. Att con amor, Jenny.
+
       if(($fila2 == NULL)||($desconf[0] < $fecha_actual_year)||(($desconf[1] < $fecha_actual_mon)&&($desconf[0] == $fecha_actual_year))||(($desconf[2] < $fecha_actual_day)&&($desconf[0] == $fecha_actual_year)&&($desconf[1] == $fecha_actual_mon))){ #Esto indica que no esta confinado, o que no ha estado confinado en ningun momento
         if(($fila2 != NULL)&&($fila2['comentario']==NULL)){
           echo '<form method = "post"><label for="comentario">Comente su experiencia la experiencia del ultimo confinamiento </label><br><input type="text" id="comentario" name="comentario" style="width : 100px; heigth : 100px"><br><input type = "submit" value="Enviar Comentario"></form>';
@@ -144,10 +147,10 @@
             unset($_POST);
           }
         }
-        echo '<form method = "post">
+        echo '<form id="formulario" method = "post" action="">
         <input type = "radio" name="pcr" value="Indicar positivo en COVID">Indicar positivo en COVID<br>
-        <input type = "submit" value="Enviar"></form>'; # Aqui ponemos el formulario para que indique si ha dado positivo
-        if(isset($_POST["pcr"])){ # Si lo indica hacemos lo siguiente
+        <input type = "submit" value="Enviar" form="formulario"></form>'; # Aqui ponemos el formulario para que indique si ha dado positivo
+        if($_SERVER["REQUEST_METHOD"] == "POST"){ # Si lo indica hacemos lo siguiente
           if($_POST["pcr"] === "Indicar positivo en COVID"){
             $pcr1=date("Y-n-j"); #cogemos el dfia actual, el de dentro de 10 dias (segundo test) y la fecha de desconfinamiento (dentro de 15 dias)
             $pcr2=date("Y-n-j", strtotime($pcr1."+ 10 days"));
@@ -155,12 +158,20 @@
             $user = "user";
             $query	=	"INSERT INTO test(email, f_test1, f_test2, f_descon) VALUES ('".$_SESSION[$user]."','".$pcr1."','".$pcr2."','".$des."')";
             $resultado	=	mysqli_query($bd,	$query); # Introducimos una nueva entrada a la tabla de test de la persona
+            echo '<script>window.location.href = "./sesion.php"</script>';#NO funciona, mecago en todo
+            #Voy a comentar el problema, creo que las variables guardan su estado en el fichero, creo que pasa algo muy raro con los if o con alguna variable que anda por ahi purulando
+            #me puedo estar equivocando tho, pero me huele a eso. Importa el orden en el que pongas el codigo php (mira sesion.php), sinceramente esto es una locura.
             unset($_POST);
+            unset($_SERVER);
           }
-        }else{
+        }
+        else
+        {
           echo 'No se ha indicado positivo todavia';
         }
       }
+      #el problema es que cuando das a enviar, todo el codigo dentro de este else se lo salta porque ya ha evaluado el if de la linea 140
+      #UNA SOLUCION: recargar pagina (linea 161)
       else{ # Por el contrario si esta confinado actualmente, es decir, si la fecha de desconfinamiento es mayor que la actual se le muestra un calendario
         $desconf = explode("-",$fila2['f_descon']);
         $segundaPCR = explode("-",$fila2['f_test2']);
@@ -181,17 +192,19 @@
       echo '<form method = "post">
       <input type = "radio" name="pcr" value="Indicar positivo en COVID">Indicar positivo en COVID
       <input type = "submit" value="Enviar"></form>';
-      if($_POST["pcr"] === "Indicar positivo en COVID"){
-        $pcr1=date("Y-n-j");
-        $pcr2=date("Y-n-j", strtotime($pcr1."+ 10 days"));
-        $des=date("Y-n-j", strtotime($pcr1."+ 15 days"));
-        $des_explode = explode("-",$des);
-        $user = "user";
-        $query	=	"INSERT INTO test(email, f_test1, f_test2, f_descon) VALUES ('".$_SESSION[$user]."','".$pcr1."','".$pcr2."','".$des."')";
-        $resultado	=	mysqli_query($bd,	$query);
-        unset($_POST);
+      if($_SERVER["REQUEST_METHOD"] == "POST"){
+        if($_POST["pcr"] === "Indicar positivo en COVID"){
+          $pcr1=date("Y-n-j");
+          $pcr2=date("Y-n-j", strtotime($pcr1."+ 10 days"));
+          $des=date("Y-n-j", strtotime($pcr1."+ 15 days"));
+          $des_explode = explode("-",$des);
+          $user = "user";
+          $query	=	"INSERT INTO test(email, f_test1, f_test2, f_descon) VALUES ('".$_SESSION[$user]."','".$pcr1."','".$pcr2."','".$des."')";
+          $resultado	=	mysqli_query($bd,	$query);
+          unset($_POST);
+        }
       }
-  }
+    }
     unset($fila,$fila2);
     ?>
   </div>
@@ -281,6 +294,10 @@
             }
             $c = 0; # Reestablecemos el valor del comprobodar a cero
           }
+<<<<<<< HEAD
+=======
+          $c = 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
+>>>>>>> 4c92b4fab97a535729ed16020be53bb0eebe6979
         }
       }
 

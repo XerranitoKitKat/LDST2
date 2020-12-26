@@ -27,22 +27,24 @@
     text-align: center;
   }
 
-  .elem {
-    margin-left: 20px;
-    margin-top: 2.5px;
-    margin-bottom:2.5px;
-  }
   input {
   padding:2px;
   font-size: 14px;
   font-family: sans-serif;
   border: 1px solid #aaaaaa;
-}
+  }
+
   select {
     margin-top:10px;
     margin-bottom:10px;
     font-size: 14px;
     font-family: sans-serif;
+  }
+
+  .elem {
+    margin-left: 20px;
+    margin-top: 2.5px;
+    margin-bottom:2.5px;
   }
 
  .error {
@@ -172,6 +174,7 @@
     }
 
       if(!$error){ //Si no hay errores procedemos a introducir los datos introducidos en la base de datos
+        print_r($_POST);
       if(crearUsuario($nombre,$apell,$correouva,$passwd,$dni,$fnacimiento,$telefono,$rol,$_POST["asignaturas"])){ //Si el correo introducido ya existe en la base de datos mostramos un error
         $userErr = "El email introducido ya existe";
       }
@@ -205,15 +208,19 @@
 
     if(comprobarUsuario($correouva,$db)){  //si no hay nadie en las base de datos con ese correo procedemos a introducir los datos en las tablas
       $query="INSERT INTO personas VALUES('".$correouva."', '".$nombre."', '".$apell."', '".$dni."', '".$fnacimiento."', '".$passwd."', '".$telefono."', '$rol')";
-      $results=mysqli_query($db,$query);
+      $result=mysqli_query($db,$query);
 
       $query="INSERT INTO per_asig VALUES";
 
       foreach($asignaturas as $value){
-        $aux=$query."('".$correouva."', '$value')";
-        $results=mysqli_query($db,$aux);
+        $aux=$query."('".$correouva."', ".$value.")";
+        print_r($aux);
+        $result=mysqli_query($db,$aux);
+        if($_POST["rol"]==2){ //si es alumno, incrementar el numero de n_matriculados
+          $query2	=	"UPDATE	asignaturas SET n_matriculados=n_matriculados+1 WHERE codigo = ".$value;
+          $result=mysqli_query($db,$query2);
+        }
       }
-      mysqli_free_result($results);
       mysqli_close($db);
       return false;
     }
