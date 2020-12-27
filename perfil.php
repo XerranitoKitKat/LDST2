@@ -289,8 +289,6 @@
           }
         }
       }
-
-      $c = 0; # Resestablezco el valor del contador porque cambiamos de entrada de la tabla
     }
     unset($fila2);
     mysqli_free_result($resultado);
