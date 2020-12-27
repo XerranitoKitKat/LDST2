@@ -286,6 +286,7 @@
       $email=$_SESSION["user"];
 
       $queryNombre="SELECT nombre FROM personas WHERE email LIKE '".$email."'";//Busco el nombre a partir del email
+      $resulNombre=mysqli_query($db,$queryNombre);
       $fila=mysqli_fetch_array($resulNombre);
       echo "<div><u>Bienvenido ".$fila['nombre'].", he aqui una lista con informacion de tus asignaturas</u></div><div>INFO</div>";
 

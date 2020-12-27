@@ -74,7 +74,7 @@
     } else {
       $nombre = test_input($_POST["nombre"]);
       $nombre=remove_accents($nombre);
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre) && strlen($nombre)>50) {  //Aseguramos que se haya introducido un nombre valido
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$nombre) || strlen($nombre)>50) {  //Aseguramos que se haya introducido un nombre valido
         $nombreErr = "Solo se permiten letras y espacios en blanco. Maximo 50 caracteres";
         $error=true;
       }
@@ -86,7 +86,7 @@
     } else {
       $apell = test_input($_POST["apell"]);
       $apell=remove_accents($apell); //quitamos acentos o eñes para que no haya problemas en la base de datos
-      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell) && strlen($apellido)>100) { //Aseguramos que se haya introducido un(os) apellido(s) valido(s)
+      if (!preg_match("/^[a-zA-Z-' ]*$/",$apell) || strlen($apell)>100) { //Aseguramos que se haya introducido un(os) apellido(s) valido(s)
         $apellErr = "Solo se permiten letras y espacios en blanco. Maximo 100 caracteres";
         $error=true;
       }
@@ -97,7 +97,7 @@
       $error=true;
     } else {
       $correouva= test_input($_POST["correouva"]);
-      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva) && strlen($correouva)>100) { //Comprobamos que el correo introducido pertenezca a la uva
+      if (!preg_match("/^(.+@+([a-z]+\.)?uva\.es)$/",$correouva) || strlen($correouva)>100) { //Comprobamos que el correo introducido pertenezca a la uva
         $correouvaErr = "Formato de correo invalido, debe pertenecer a la uva";
         $error=true;
       }
@@ -109,7 +109,7 @@
     } else {
       $passwd = test_input($_POST["passwd"]);
       $passwd=remove_accents($passwd);
-      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd) && strlen($correouva)>50) { //Comprobamos que la contrasena introducida siga unos criterios
+      if(!preg_match("/^.*(?=.{8,})(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).*$/",$passwd) || strlen($correouva)>50) { //Comprobamos que la contrasena introducida siga unos criterios
         $passwdErr= "La contrase&ntildea tiene que tener como	mínimo 8	caracteres cualesquiera y al menos tiene que contener una mayuscula, una minuscula y un numero";
         $error=true;
       }
